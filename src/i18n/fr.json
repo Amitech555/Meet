@@ -174,7 +174,7 @@
     "waitlistToast": "C'est complet — on te prévient si ça se libère.",
     "waitlistPosition": "Tu es n° {{position}} sur la liste d'attente.",
     "leftToast": "Désistement noté. Ta place est libérée.",
-    "confirmPaidTitle": "Réserver pour {{amount}} $ ?",
+    "confirmPaidTitle": "Réserver pour {{price}} ?",
     "confirmPaidBody": "Le paiement se fait sur place auprès de l'organisateur pour l'instant.",
     "confirmLeave": "Te désister de cette session ?",
     "cancelledBanner": "Cette session a été annulée par l'organisateur.",

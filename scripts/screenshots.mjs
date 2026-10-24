@@ -13,6 +13,7 @@ const root = join(process.cwd(), 'dist');
 const outDir = join(process.cwd(), 'screenshots');
 const args = process.argv.slice(2);
 const full = args.includes('--full');
+const onboarded = args.includes('--onboarded');
 const routes = args.filter((a) => a.startsWith('/'));
 if (routes.length === 0) routes.push('/');
 
@@ -43,6 +44,12 @@ const browser = await chromium.launch();
 const errors = [];
 for (const d of devices) {
   const ctx = await browser.newContext({ viewport: full ? { width: d.viewport.width, height: 4200 } : d.viewport, deviceScaleFactor: 2, colorScheme: d.scheme, locale: 'fr-CA', timezoneId: 'America/Toronto', isMobile: true, hasTouch: true });
+  if (onboarded) {
+    // Préférences persistées comme après l'onboarding (Montréal + 3 intérêts)
+    await ctx.addInitScript(() => {
+      localStorage.setItem('partants-prefs', JSON.stringify({ state: { onboarded: true, cityId: 1, interests: [1, 2, 10], theme: 'system', view: 'list' }, version: 0 }));
+    });
+  }
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(`${d.name} ${e.message}`));
   page.on('console', (m) => m.type() === 'error' && errors.push(`${d.name} console: ${m.text()}`));

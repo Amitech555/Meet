@@ -3,6 +3,7 @@ import {
   defaultSessionStart,
   formatShortDate,
   formatStartTime,
+  nextDays,
   rangeFor,
   wallParts,
   zonedWallTimeToUtc,
@@ -51,5 +52,13 @@ describe('time (America/Toronto)', () => {
 
   it('formate la date courte en français québécois', () => {
     expect(formatShortDate('2026-10-24T14:00:00Z', 'fr')).toMatch(/^sam\.? 24 oct\.?$/);
+  });
+});
+
+describe('nextDays', () => {
+  it('donne des bornes UTC de journées montréalaises', () => {
+    const [first, second] = nextDays(2, new Date('2026-10-24T02:00:00Z')); // 22:00 le 23 à Montréal
+    expect(first!.from).toBe('2026-10-23T04:00:00.000Z');
+    expect(second!.to).toBe('2026-10-25T03:59:59.999Z');
   });
 });

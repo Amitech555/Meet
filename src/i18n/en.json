@@ -174,7 +174,7 @@
     "waitlistToast": "It's full — we'll let you know if a spot opens.",
     "waitlistPosition": "You're #{{position}} on the waitlist.",
     "leftToast": "Got it. Your spot is free again.",
-    "confirmPaidTitle": "Book for ${{amount}}?",
+    "confirmPaidTitle": "Book for {{price}}?",
     "confirmPaidBody": "For now, you pay the organizer on site.",
     "confirmLeave": "Drop out of this session?",
     "cancelledBanner": "This session was cancelled by the organizer.",

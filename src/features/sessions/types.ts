@@ -66,3 +66,24 @@ export function isFillingFast(s: Pick<SessionSummary, 'max_players' | 'joined_co
   const left = spotsLeft(s);
   return left > 0 && left <= 3;
 }
+
+export type ChatMessage = {
+  id: number;
+  body: string;
+  created_at: string;
+  user_id: string | null;
+  deleted?: boolean;
+  author: PersonPreview | null;
+};
+
+/** Forme renvoyée par `get_session` : carte + détail. */
+export type SessionDetail = SessionSummary & {
+  participants: (PersonPreview & { guest_count: number; is_host: boolean })[];
+  my_waitlist_position: number;
+  my_guest_count: number | null;
+  is_member: boolean;
+  is_saved: boolean;
+  cancelled_reason: string | null;
+  chat_preview: ChatMessage[] | null;
+  message_count: number | null;
+};

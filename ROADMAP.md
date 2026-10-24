@@ -23,9 +23,9 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 |---|---|---|
 | (a) | Setup Expo 58 + NativeWind + design system + `/styleguide` + navigation | ✅ fait |
 | (b) | Schéma DB + RLS + fonctions + seed Montréal + tests pgTAP + connexion | ✅ fait |
-| (c) | Onboarding + choix de ville + intérêts | ⏳ en cours |
-| (d) | Feed Découvrir + filtres + carte | à faire |
-| (e) | Détail de session + rejoindre/quitter + liste d'attente | à faire |
+| (c) | Onboarding + choix de ville + intérêts | ✅ fait |
+| (d) | Feed Découvrir + filtres + carte + recherche | ✅ fait (carte native à valider sur appareil) |
+| (e) | Détail de session + rejoindre/quitter + liste d'attente | ⏳ en cours |
 | (f) | Créer une session | à faire |
 | (g) | Groupes + chat Realtime | à faire |
 | (h) | Profil + avis + check-in | à faire |
@@ -50,6 +50,18 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Tests : 63 tests pgTAP (RLS table par table, liste d'attente, présence, avis) + `scripts/race-test.sh` (30 connexions simultanées sur 10 places → jamais de sur-réservation).
 - Connexion : Apple (iOS), Google (OAuth PKCE), courriel (code à 6 chiffres), puis prénom + 18+ + conditions ; l'action mise de côté est rejouée.
 - Analytics typés (PostHog, sans données sensibles) et drapeaux de fonctionnalités.
+
+### (c) — fait
+- 3 écrans (< 30 s) : bandeaux d'activités animés (immobiles si « réduire les animations »), ville (Montréal ouverte, Laval/Québec « Bientôt », géolocalisation facultative), grandes tuiles colorées ≥ 3 intérêts avec retour tactile. « Passer » partout → Montréal par défaut.
+- Aucune connexion demandée : préférences locales, envoyées au serveur à l'inscription.
+
+### (d) — fait
+- Feed : une seule requête au chargement (sections « Ce soir près de toi », « Se remplit vite », « Pour toi » dérivées de la 1re page), puis fil chronologique paginé par curseur (FlashList).
+- Filtres : catégories (parent inclut enfants), raccourcis de date, choix d'un jour, prix, niveau, distance (si position).
+- « Je suis partant » directement sur la carte : mise à jour optimiste dans tous les caches, rollback + message humain, confirmation légère si payant.
+- Vue carte MapLibre (marqueurs par teinte + carrousel synchronisé) ; repli explicite sur web.
+- Recherche texte (P1) : activité, lieu, organisateur, insensible aux accents.
+- Mesure `feed_loaded` (durée) pour la cible < 2 s.
 
 ## Décisions
 

@@ -119,3 +119,12 @@ export function wallParts(iso: string) {
     minutes: d.getMinutes(),
   };
 }
+
+/** Les n prochains jours (à partir d'aujourd'hui, heure de Montréal), avec leurs bornes UTC. */
+export function nextDays(n: number, now: Date = new Date()): { from: string; to: string }[] {
+  const today = inAppTz(now);
+  return Array.from({ length: n }, (_, i) => {
+    const d = addDays(today, i);
+    return { from: utc(startOfDay(d)), to: utc(endOfDay(d)) };
+  });
+}
