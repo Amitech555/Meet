@@ -137,3 +137,9 @@ export function formatDuration(minutes: number, locale: AppLocale = 'fr'): strin
   if (locale === 'en') return m ? `${h}h ${m}m` : `${h}h`;
   return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
 }
+
+/** Heure d'un message : « 18:08 » aujourd'hui, sinon « mer. 21 oct. · 18:08 ». */
+export function formatMessageTime(iso: string, locale: AppLocale = 'fr', now: Date = new Date()): string {
+  const sameDay = differenceInCalendarDays(inAppTz(iso), inAppTz(now)) === 0;
+  return sameDay ? formatStartTime(iso, locale) : `${formatShortDate(iso, locale)} · ${formatStartTime(iso, locale)}`;
+}

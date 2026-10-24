@@ -72,3 +72,12 @@ describe('formatDuration', () => {
     expect(formatDuration(90, 'en')).toBe('1h 30m');
   });
 });
+
+describe('formatMessageTime', () => {
+  it('heure seule aujourd’hui, date sinon', () => {
+    const { formatMessageTime } = jest.requireActual('../time');
+    const now = new Date('2026-10-24T20:00:00Z');
+    expect(formatMessageTime('2026-10-24T22:08:00Z', 'fr', now)).toBe('18:08');
+    expect(formatMessageTime('2026-10-21T22:08:00Z', 'fr', now)).toMatch(/^mer\.? 21 oct\.? · 18:08$/);
+  });
+});

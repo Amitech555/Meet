@@ -27,8 +27,8 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 | (d) | Feed Découvrir + filtres + carte + recherche | ✅ fait (carte native à valider sur appareil) |
 | (e) | Détail de session + rejoindre/quitter + liste d'attente | ✅ fait |
 | (f) | Créer une session | ✅ fait |
-| (g) | Groupes + chat Realtime | ⏳ en cours |
-| (h) | Profil + avis + check-in | à faire |
+| (g) | Groupes + chat Realtime | ✅ fait |
+| (h) | Profil + avis + check-in | ⏳ en cours |
 | (i) | Notifications | à faire |
 
 ### (a) — fait
@@ -79,6 +79,14 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Où : recherche Mapbox Geocoding biaisée Montréal, repli sur lieux connus sans jeton ; mini-carte du repère.
 - Détails : places min/max (compteurs accessibles), niveau, prix (paiement sur place, Phase 2 Stripe), politique d'annulation, photo de couverture (Storage) ou couverture générée, publication dans un groupe dont on est admin.
 - Validation client testée + revalidation serveur ; e2e : création publiée en ~3 s.
+
+### (g) — fait
+- Onglet Groupes : « Mes groupes » + « À découvrir » (cartes : couverture, rythme, prochaine session en évidence, membres).
+- Écran de groupe : prochaine session en tête, calendrier groupé par jour, discussion, rejoindre / quitter / suivre, lien d'invitation unique `/g/<code>` à partager sur WhatsApp (import rapide d'un groupe existant), groupes privés verrouillés sans le lien.
+- Créer un groupe (nom, activité, rythme, visibilité) ; l'admin peut publier des sessions dans le groupe.
+- Chat (session et groupe) : temps réel (Realtime + RLS), envoi optimiste sans doublon, heure / date, signalement et suppression (auteur ou organisateur/admin), anti-spam 20 messages/min côté serveur.
+- e2e : rejoindre un groupe puis message reçu en direct par un autre membre connecté dans un second navigateur.
+- Bug corrigé : comptes de démo inutilisables en connexion par mot de passe (colonnes de jetons NULL dans le seed).
 
 ## Décisions
 

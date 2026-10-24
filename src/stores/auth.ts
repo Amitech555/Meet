@@ -5,6 +5,7 @@ import type { Session } from '@supabase/supabase-js';
 export type PendingAction =
   | { type: 'join'; sessionId: string; series?: boolean }
   | { type: 'create' }
+  | { type: 'createGroup' }
   | { type: 'joinGroup'; groupId: string; inviteCode?: string }
   | { type: 'chat'; sessionId: string };
 

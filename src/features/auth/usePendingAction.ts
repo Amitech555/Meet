@@ -16,6 +16,9 @@ export function useRunPendingAction() {
       case 'create':
         router.push('/create');
         break;
+      case 'createGroup':
+        router.push('/group/new');
+        break;
       case 'joinGroup':
         router.push({ pathname: '/group/[id]', params: { id: p.groupId, autojoin: '1', ...(p.inviteCode ? { code: p.inviteCode } : {}) } });
         break;

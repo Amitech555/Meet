@@ -288,7 +288,8 @@
     "joinedToast": "Welcome to the group.",
     "follow": "Follow",
     "following": "Following",
-    "newSession": "Plan a session"
+    "newSession": "Plan a session",
+    "rhythmPlaceholder": "Every Tuesday 6:30"
   },
   "chat": {
     "placeholder": "Write a message",
@@ -297,7 +298,8 @@
     "deletedUser": "Deleted account",
     "reportMessage": "Report this message",
     "tooLong": "Message too long (1000 characters max).",
-    "host": "Host"
+    "host": "Host",
+    "delete": "Delete message"
   },
   "profile": {
     "edit": "Edit profile",

@@ -39,11 +39,14 @@ from (values
 join public.categories p on p.slug = v.parent_slug;
 
 -- Comptes de démo ----------------------------------------------------------------
-insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+-- Les colonnes *_token doivent être '' (pas NULL), sinon GoTrue refuse la connexion par mot de passe.
+insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change_token_new, email_change, email_change_token_current, phone_change, phone_change_token, reauthentication_token)
 select '00000000-0000-0000-0000-000000000000', v.id::uuid, 'authenticated', 'authenticated', v.email,
        extensions.crypt('partants-demo', extensions.gen_salt('bf')), now(),
        '{"provider":"email","providers":["email"]}', jsonb_build_object('full_name', v.name),
-       now() - (v.age_days || ' days')::interval, now()
+       now() - (v.age_days || ' days')::interval, now(),
+       '', '', '', '', '', '', '', ''
 from (values
   ('a1000000-0000-4000-8000-000000000001', 'demo+camille@partants.app', 'Camille Tremblay', 420),
   ('a1000000-0000-4000-8000-000000000002', 'demo+karim@partants.app', 'Karim Haddad', 380),

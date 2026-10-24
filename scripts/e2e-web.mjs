@@ -118,6 +118,37 @@ try {
   if (created !== '1/8') throw new Error(`session créée inattendue : ${created}`);
   step('base : session 1/8 (valeurs par défaut : 8 places)');
 
+
+  // Groupe : rejoindre « Course Griffintown du mardi » puis discuter en temps réel avec l'organisateur (Karim)
+  await page.goto(`${base}/groups`, { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: /Course Griffintown du mardi/ }).first().click();
+  await page.getByRole('button', { name: 'Rejoindre le groupe' }).click();
+  await page.getByRole('button', { name: 'Discussion' }).waitFor({ timeout: 10000 });
+  step('groupe rejoint');
+
+  // Karim, connecté dans un autre navigateur, ouvre le chat du groupe
+  const { createClient } = createRequire(import.meta.url)(join(process.cwd(), 'node_modules/@supabase/supabase-js'));
+  const env = Object.fromEntries((await readFile('.env', 'utf8')).split('\n').filter(Boolean).map((l) => l.split('=')));
+  const sb = createClient(env.EXPO_PUBLIC_SUPABASE_URL, env.EXPO_PUBLIC_SUPABASE_ANON_KEY);
+  const { data: karim } = await sb.auth.signInWithPassword({ email: 'demo+karim@partants.app', password: 'partants-demo' });
+  const ctx2 = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'fr-CA', timezoneId: 'America/Toronto' });
+  await ctx2.addInitScript((session) => {
+    localStorage.setItem('partants-prefs', JSON.stringify({ state: { onboarded: true, cityId: 1, interests: [], theme: 'system', view: 'list' }, version: 0 }));
+    localStorage.setItem('sb-127-auth-token', JSON.stringify(session));
+  }, karim.session);
+  const page2 = await ctx2.newPage();
+  await page2.goto(`${base}/group/b2000000-0000-4000-8000-000000000001`, { waitUntil: 'networkidle' });
+  await page2.getByRole('button', { name: 'Discussion' }).click();
+  await page2.getByText('Bienvenue aux nouveaux').waitFor({ timeout: 10000 });
+
+  await page.getByRole('button', { name: 'Discussion' }).click();
+  await page.getByLabel('Écris un message').fill('Salut, je viens mardi pour la première fois');
+  await page.getByRole('button', { name: 'Envoyer' }).click();
+  await page2.getByText('Salut, je viens mardi pour la première fois').waitFor({ timeout: 10000 });
+  step('message reçu en direct par un autre membre (Realtime + RLS)');
+  await page2.screenshot({ path: 'screenshots/e2e-group-chat.png' });
+  await ctx2.close();
+
   console.log('\nPARCOURS PRINCIPAL OK');
 } catch (e) {
   await page.screenshot({ path: 'screenshots/e2e-failure.png' });
@@ -125,6 +156,7 @@ try {
   if (errors.length) console.error('Erreurs JS :', errors);
   process.exitCode = 1;
 } finally {
+  execSync(`psql "${DB_URL}" -qAt -c "delete from public.messages where user_id in (select id from auth.users where email = '${email}');"`);
   execSync(`psql "${DB_URL}" -qAt -c "delete from public.sessions where host_id in (select id from auth.users where email = '${email}'); delete from auth.users where email = '${email}'"`);
   await browser.close();
   server.close();
