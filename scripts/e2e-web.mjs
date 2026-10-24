@@ -149,6 +149,38 @@ try {
   await page2.screenshot({ path: 'screenshots/e2e-group-chat.png' });
   await ctx2.close();
 
+
+  // Après la session : l'organisatrice (Camille) fait l'appel puis laisse des avis
+  const { data: camille } = await sb.auth.signInWithPassword({ email: 'demo+camille@partants.app', password: 'partants-demo' });
+  const ctx3 = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, locale: 'fr-CA', timezoneId: 'America/Toronto' });
+  await ctx3.addInitScript((session) => {
+    localStorage.setItem('partants-prefs', JSON.stringify({ state: { onboarded: true, cityId: 1, interests: [], theme: 'system', view: 'list' }, version: 0 }));
+    localStorage.setItem('sb-127-auth-token', JSON.stringify(session));
+  }, camille.session);
+  const page3 = await ctx3.newPage();
+  await page3.goto(`${base}/sessions`, { waitUntil: 'networkidle' });
+  await page3.getByRole('button', { name: /Fais l'appel pour Basket du mercredi soir/ }).click();
+  await page3.getByText('Qui était là ?').waitFor();
+  await page3.screenshot({ path: 'screenshots/e2e-checkin.png' });
+  await page3.getByRole('checkbox').first().click();
+  await page3.getByRole('button', { name: "Valider l'appel" }).click();
+  await page3.getByText('Comment c\'était ?').waitFor({ timeout: 10000 });
+  step('appel enregistré (1 absent)');
+  await page3.getByRole('button', { name: /^Bonne expérience/ }).first().click();
+  await page3.getByRole('button', { name: 'Ponctuel' }).first().click();
+  await page3.screenshot({ path: 'screenshots/e2e-review.png' });
+  await page3.getByRole('button', { name: 'Envoyer les avis' }).click();
+  await page3.waitForTimeout(1500);
+  const after = execSync(`psql "${DB_URL}" -qAt -c "select s.status || ' ' || (select count(*) from public.session_participants where session_id = s.id and status = 'no_show') || ' ' || (select count(*) from public.reviews where session_id = s.id) from public.sessions s where s.id = 'c3000000-0000-4000-8000-000000000107'"`).toString().trim();
+  if (after !== 'completed 1 1') throw new Error(`après l'appel : ${after}`);
+  step('base : session terminée, 1 absent, 1 avis');
+  await page3.goto(`${base}/profile`, { waitUntil: 'networkidle' });
+  await page3.getByText('Camille').first().waitFor();
+  await page3.waitForTimeout(800);
+  await page3.screenshot({ path: 'screenshots/e2e-profile.png' });
+  step('profil : stats, fiabilité, tags');
+  await ctx3.close();
+
   console.log('\nPARCOURS PRINCIPAL OK');
 } catch (e) {
   await page.screenshot({ path: 'screenshots/e2e-failure.png' });

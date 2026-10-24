@@ -1,6 +1,6 @@
 import '../../global.css';
 import '@/design/interop';
-import '@/i18n';
+import i18n from '@/i18n';
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -46,10 +46,14 @@ function Navigator() {
 /** Applique la préférence d'apparence (système / clair / sombre) mémorisée. */
 function useThemePreference() {
   const pref = usePrefs((s) => s.theme);
+  const locale = usePrefs((s) => s.locale);
   const { setColorScheme } = useColorScheme();
   useEffect(() => {
     setColorScheme(pref);
   }, [pref, setColorScheme]);
+  useEffect(() => {
+    if (locale && i18n.language !== locale) void i18n.changeLanguage(locale);
+  }, [locale]);
 }
 
 export default function RootLayout() {

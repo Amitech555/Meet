@@ -329,7 +329,13 @@
     "blockConfirm": "Block {{name}}? You won't see each other's sessions anymore.",
     "blocked": "{{name}} is blocked.",
     "memberSince": "Member since {{date}}",
-    "following": "Organizers you follow"
+    "following": "Organizers you follow",
+    "langFr": "Français",
+    "langEn": "English",
+    "follow": "Follow",
+    "unfollow": "Following",
+    "unblock": "Unblock",
+    "hostedLabel": "Hosted"
   },
   "review": {
     "checkinTitle": "Who showed up?",

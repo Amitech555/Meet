@@ -143,3 +143,8 @@ export function formatMessageTime(iso: string, locale: AppLocale = 'fr', now: Da
   const sameDay = differenceInCalendarDays(inAppTz(iso), inAppTz(now)) === 0;
   return sameDay ? formatStartTime(iso, locale) : `${formatShortDate(iso, locale)} · ${formatStartTime(iso, locale)}`;
 }
+
+/** « octobre 2026 » / « October 2026 » */
+export function formatMonthYear(iso: string, locale: AppLocale = 'fr'): string {
+  return format(inAppTz(iso), 'MMMM yyyy', { locale: locales[locale] });
+}

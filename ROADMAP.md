@@ -28,8 +28,8 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 | (e) | Détail de session + rejoindre/quitter + liste d'attente | ✅ fait |
 | (f) | Créer une session | ✅ fait |
 | (g) | Groupes + chat Realtime | ✅ fait |
-| (h) | Profil + avis + check-in | ⏳ en cours |
-| (i) | Notifications | à faire |
+| (h) | Profil + avis + check-in + Mes sessions | ✅ fait |
+| (i) | Notifications | ⏳ en cours |
 
 ### (a) — fait
 - Expo SDK 58 / RN 0.88 / React 19, Expo Router (routes dans `src/app`), TypeScript strict.
@@ -87,6 +87,13 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Chat (session et groupe) : temps réel (Realtime + RLS), envoi optimiste sans doublon, heure / date, signalement et suppression (auteur ou organisateur/admin), anti-spam 20 messages/min côté serveur.
 - e2e : rejoindre un groupe puis message reçu en direct par un autre membre connecté dans un second navigateur.
 - Bug corrigé : comptes de démo inutilisables en connexion par mot de passe (colonnes de jetons NULL dans le seed).
+
+### (h) — fait
+- Mes sessions : à venir / passées / j'organise, bannières « Fais l'appel » et « Donne ton avis », « Refaire la même ».
+- Profil : avatar (Storage), ville, membre depuis, sessions jouées, présence %, sessions organisées, activités en pastilles, avis en tags agrégés (anonymes), prochaines sessions ; édition prénom/bio ; réglages langue (FR/EN), apparence, conditions, déconnexion, **suppression de compte** (Loi 25).
+- Profil public : suivre un organisateur, bloquer / débloquer, signaler. Aucun message privé (hors scope).
+- Après la session : « Qui était là ? » (tout coché, on décoche les absents) → avis 👍/👎 + tags en un tap par personne.
+- e2e : appel (1 absent), avis, profil vérifiés en base.
 
 ## Décisions
 

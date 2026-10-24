@@ -164,7 +164,8 @@ insert into demo_sessions values
   (103, 3, 'board-games', 'Soirée jeux : Splendor et Carcassonne', 'Session passée.', -5, 19, 0, 180, 'Café Ludik', '1215 rue Wellington, Montréal', 45.4925, -73.5605, 4, 12, 'beginner', 800, 3, 9),
   (104, 1, 'basketball', 'Basket du jeudi — 5 contre 5', 'Session passée.', -14, 18, 30, 90, 'Parc La Fontaine', '3933 av. du Parc-La Fontaine, Montréal', 45.5277, -73.5695, 6, 12, 'intermediate', 0, 2, 10),
   (105, 2, 'running', 'Course du canal Lachine — 8 km', 'Session passée.', -13, 6, 30, 60, 'Marché Atwater', '138 av. Atwater, Montréal', 45.4807, -73.5772, 2, 25, 'all', 0, 1, 11),
-  (106, 4, 'pickleball', 'Pickleball au Vieux-Port', 'Session passée.', -3, 10, 0, 90, 'Quai de l''Horloge', 'Quai de l''Horloge, Vieux-Port de Montréal', 45.5105, -73.5469, 4, 8, 'all', 1200, null, 8);
+  (106, 4, 'pickleball', 'Pickleball au Vieux-Port', 'Session passée.', -3, 10, 0, 90, 'Quai de l''Horloge', 'Quai de l''Horloge, Vieux-Port de Montréal', 45.5105, -73.5469, 4, 8, 'all', 1200, null, 8),
+  (107, 1, 'basketball', 'Basket du mercredi soir', 'Session d''hier, en attente de l''appel.', -1, 18, 30, 90, 'Parc La Fontaine', '3933 av. du Parc-La Fontaine, Montréal', 45.5277, -73.5695, 6, 10, 'intermediate', 0, 2, 7);
 
 -- Insertion des sessions (UUID déterministes : c3…<n>)
 insert into public.sessions (id, host_id, group_id, category_id, title, description, starts_at, ends_at, venue_name, address, location, city_id,
@@ -178,7 +179,7 @@ select
   d.venue, d.address, extensions.st_point(d.lng, d.lat, 4326)::extensions.geography,
   (select id from public.cities where slug = 'montreal'),
   d.min_p, d.max_p, d.lvl::public.session_level, d.price,
-  case when d.n > 100 then 'completed'::public.session_status else 'published'::public.session_status end
+  case when d.n between 101 and 106 then 'completed'::public.session_status else 'published'::public.session_status end
 from demo_sessions d
 join public.categories c on c.slug = d.cat
 cross join lateral (

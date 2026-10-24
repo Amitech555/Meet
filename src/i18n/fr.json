@@ -329,7 +329,13 @@
     "blockConfirm": "Bloquer {{name}} ? Vous ne verrez plus vos sessions respectives.",
     "blocked": "{{name}} est bloqué.",
     "memberSince": "Membre depuis {{date}}",
-    "following": "Organisateurs suivis"
+    "following": "Organisateurs suivis",
+    "langFr": "Français",
+    "langEn": "English",
+    "follow": "Suivre",
+    "unfollow": "Suivi",
+    "unblock": "Débloquer",
+    "hostedLabel": "Organisées"
   },
   "review": {
     "checkinTitle": "Qui était là ?",
