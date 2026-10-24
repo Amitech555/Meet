@@ -397,7 +397,8 @@ begin
       'status', existing.status,
       'position', case when existing.status = 'waitlist' then (
         select count(*) from public.session_participants
-        where session_id = p_session_id and status = 'waitlist' and joined_at <= existing.joined_at
+        where session_id = p_session_id and status = 'waitlist'
+          and (joined_at, user_id) <= (existing.joined_at, existing.user_id)
       ) end,
       'places_taken', s.places_taken
     );
@@ -417,8 +418,9 @@ begin
     new_status := 'waitlist';
   end if;
 
+  -- clock_timestamp() (et non now()) : l'ordre d'arrivée reste strict même dans une même transaction
   insert into public.session_participants (session_id, user_id, status, guest_count, joined_at)
-  values (p_session_id, uid, new_status, guests, now())
+  values (p_session_id, uid, new_status, guests, clock_timestamp())
   on conflict (session_id, user_id) do update
     set status = excluded.status, guest_count = excluded.guest_count, joined_at = excluded.joined_at;
 
@@ -428,9 +430,11 @@ begin
   end if;
 
   if new_status = 'waitlist' then
-    select count(*) into pos from public.session_participants
-    where session_id = p_session_id and status = 'waitlist'
-      and (joined_at, user_id) <= (now(), uid);
+    select count(*) into pos
+    from public.session_participants w, public.session_participants me
+    where me.session_id = p_session_id and me.user_id = uid
+      and w.session_id = p_session_id and w.status = 'waitlist'
+      and (w.joined_at, w.user_id) <= (me.joined_at, me.user_id);
   end if;
 
   return jsonb_build_object(

@@ -22,8 +22,8 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 | Étape | Contenu | État |
 |---|---|---|
 | (a) | Setup Expo 58 + NativeWind + design system + `/styleguide` + navigation | ✅ fait |
-| (b) | Schéma DB + RLS + fonctions + seed Montréal + tests pgTAP | ⏳ en cours |
-| (c) | Onboarding + choix de ville + intérêts | à faire |
+| (b) | Schéma DB + RLS + fonctions + seed Montréal + tests pgTAP + connexion | ✅ fait |
+| (c) | Onboarding + choix de ville + intérêts | ⏳ en cours |
 | (d) | Feed Découvrir + filtres + carte | à faire |
 | (e) | Détail de session + rejoindre/quitter + liste d'attente | à faire |
 | (f) | Créer une session | à faire |
@@ -42,6 +42,15 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - `lib/time.ts` testé (UTC ↔ America/Toronto, changement d'heure du 1er novembre).
 - Script de captures Playwright (iPhone SE, grand écran, sombre) sur l'export web.
 
+### (b) — fait
+- 6 migrations : extensions (PostGIS, pg_trgm, unaccent), 17 tables, fonctions métier, API de lecture JSON, RLS + privilèges par colonne, Realtime, Storage, schéma paiements.
+- `join_session` / `leave_session` : verrou `FOR UPDATE`, idempotent, file d'attente stricte (`clock_timestamp()`), +1 invité, promotion automatique + notification.
+- Fonctions : `create_session` (récurrence, ville la plus proche, anti-spam 10/24 h), `cancel_session`, `duplicate_session`, `record_attendance`, `submit_reviews`, `reliability_score`, `join_group`, `delete_my_account` (Loi 25), `feed_sessions` (filtres, rayon PostGIS, recherche sans accents, curseur).
+- Seed : Montréal + 21 catégories (12 familles + Autre + sous-catégories), 16 comptes de démo, 3 groupes, 22 sessions à venir, 6 passées avec présences et avis.
+- Tests : 63 tests pgTAP (RLS table par table, liste d'attente, présence, avis) + `scripts/race-test.sh` (30 connexions simultanées sur 10 places → jamais de sur-réservation).
+- Connexion : Apple (iOS), Google (OAuth PKCE), courriel (code à 6 chiffres), puis prénom + 18+ + conditions ; l'action mise de côté est rejouée.
+- Analytics typés (PostHog, sans données sensibles) et drapeaux de fonctionnalités.
+
 ## Décisions
 
 | # | Décision | Raison |
@@ -57,6 +66,10 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 | 9 | MapLibre + tuiles OpenFreeMap (sans clé) ; Mapbox seulement pour le géocodage | Coût nul pour les tuiles, pas de verrou fournisseur. Exige un dev build. |
 | 10 | Texte des boutons orange en **encre**, pas en blanc | Blanc sur `#FF4F1A` = 3,1:1, sous le seuil AA pour du 16 px ; encre = 6,1:1. |
 | 11 | Session persistée dans AsyncStorage | Les jetons Supabase dépassent la limite de 2 ko de SecureStore (recommandation officielle Supabase). |
+| 13 | L'organisateur est inscrit d'office et compte dans `max_players` | Il joue aussi ; évite une session « vide » à la création. |
+| 14 | Fiabilité = présents / (présents + absents), affichée à partir de 3 sessions pointées | Évite de juger quelqu'un sur une seule absence. |
+| 15 | Compteurs `places_taken` / `waitlist_count` dénormalisés par trigger | Lecture anonyme et Realtime sans exposer la liste des inscrits. |
+| 16 | Lectures via RPC JSON (une requête par écran) | Un aller-retour réseau, règles de visibilité centralisées en SQL. |
 | 12 | Transitions partagées carte → détail : remplacées par un fondu + parallaxe | Les shared element transitions de Reanimated 4 sont encore expérimentales ; on réévaluera. |
 
 ## Backlog
