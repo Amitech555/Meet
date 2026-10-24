@@ -25,8 +25,8 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 | (b) | Schéma DB + RLS + fonctions + seed Montréal + tests pgTAP + connexion | ✅ fait |
 | (c) | Onboarding + choix de ville + intérêts | ✅ fait |
 | (d) | Feed Découvrir + filtres + carte + recherche | ✅ fait (carte native à valider sur appareil) |
-| (e) | Détail de session + rejoindre/quitter + liste d'attente | ⏳ en cours |
-| (f) | Créer une session | à faire |
+| (e) | Détail de session + rejoindre/quitter + liste d'attente | ✅ fait |
+| (f) | Créer une session | ⏳ en cours |
 | (g) | Groupes + chat Realtime | à faire |
 | (h) | Profil + avis + check-in | à faire |
 | (i) | Notifications | à faire |
@@ -62,6 +62,14 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Vue carte MapLibre (marqueurs par teinte + carrousel synchronisé) ; repli explicite sur web.
 - Recherche texte (P1) : activité, lieu, organisateur, insensible aux accents.
 - Mesure `feed_loaded` (durée) pour la cible < 2 s.
+
+### (e) — fait
+- Détail : couverture avec parallaxe (coupée si « réduire les animations »), blocs Quand / Où / Qui, mini-carte + « Ouvrir dans Plans », carte de l'organisateur (fiabilité, sessions, vérifié), participants (+1 visibles), aperçu du chat réservé aux membres, politique d'annulation, bannières annulée / commencée / terminée.
+- Barre collante : prix + « Je suis partant » → « Liste d'attente » si complet → « Tu y es ✓ » ; feuille de gestion : calendrier (dialogue système / .ics), inviter, +1 (migration 007 `set_guest`), se désister ; côté organisateur : appel, refaire la même, annuler avec message.
+- Compteur de places en direct (Realtime) avec chiffre animé ; « Rejoindre toute la série ».
+- Signalement de session ; liens universels `/s/<id>`.
+- **Parcours principal testé de bout en bout** (`npm run e2e:web`, Supabase local + Mailpit) : feed anonyme en ~1,5 s → session → connexion par code → 18+ → inscription rejouée → « Tu y es ». Flux Maestro équivalent pour mobile (`e2e/maestro`).
+- Bugs trouvés et corrigés par ce test : courriel sans code (gabarit FR avec `{{ .Token }}`), canal Realtime réutilisé au retour d'auth (écran blanc) → nom unique + ErrorBoundary global.
 
 ## Décisions
 

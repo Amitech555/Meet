@@ -17,8 +17,15 @@ import { ToastHost } from '@/components/ui/Toast';
 import { queryClient } from '@/lib/queryClient';
 import { useAuthListener } from '@/features/auth/useAuthListener';
 import { usePrefs } from '@/stores/prefs';
+import { initMonitoring } from '@/lib/monitoring';
+import { track } from '@/lib/analytics';
+
+initMonitoring();
+track('app_opened');
 
 void SplashScreen.preventAutoHideAsync();
+
+export { ErrorBoundary } from '@/components/AppErrorBoundary';
 
 function Navigator() {
   const { scheme, colors } = useTheme();

@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { fetchFeed, fetchSession, joinSeries, joinSession, leaveSession, FEED_PAGE, type FeedCursor } from './api';
+import { cancelSession, fetchFeed, fetchSession, joinSeries, joinSession, leaveSession, setGuest, FEED_PAGE, type FeedCursor } from './api';
 import { restoreSnapshot, updateSessionEverywhere } from './cache';
 import { optimisticJoin, optimisticLeave, reconcileJoin } from './optimistic';
 import type { SessionSummary } from './types';
@@ -121,5 +121,31 @@ export function useJoinSeries() {
       void qc.invalidateQueries({ queryKey: ['my-sessions'] });
     },
     onError: (e) => toast(errorMessage(e, t), 'error'),
+  });
+}
+
+export function useSetGuest() {
+  const qc = useQueryClient();
+  const { t } = useTranslation();
+  return useMutation({
+    mutationFn: ({ session, guest }: { session: SessionSummary; guest: boolean }) => setGuest(session.id, guest),
+    onSuccess: (res, { session }) => updateSessionEverywhere(qc, session.id, (s) => ({ ...s, joined_count: res.places_taken })),
+    onError: (e) => toast(errorMessage(e, t), 'error'),
+    onSettled: (_r, _e, { session }) => invalidateAfterChange(qc, session.id),
+  });
+}
+
+export function useCancelSession() {
+  const qc = useQueryClient();
+  const { t } = useTranslation();
+  return useMutation({
+    mutationFn: ({ session, reason }: { session: SessionSummary; reason?: string }) => cancelSession(session.id, reason),
+    onSuccess: (_r, { session }) => {
+      updateSessionEverywhere(qc, session.id, (s) => ({ ...s, status: 'cancelled' }));
+      track('session_cancelled', { category: session.category.slug });
+      void qc.invalidateQueries({ queryKey: ['feed'] });
+    },
+    onError: (e) => toast(errorMessage(e, t), 'error'),
+    onSettled: (_r, _e, { session }) => invalidateAfterChange(qc, session.id),
   });
 }

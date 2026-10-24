@@ -51,3 +51,11 @@ export function leaveSession(id: string) {
 export function joinSeries(seriesId: string) {
   return rpc<'join_series', number>('join_series', { p_series_id: seriesId });
 }
+
+export function setGuest(id: string, guest: boolean) {
+  return rpc<'set_guest', { guest_count: number; places_taken: number }>('set_guest', { p_session_id: id, p_guest: guest });
+}
+
+export function cancelSession(id: string, reason?: string) {
+  return rpc('cancel_session', { p_session_id: id, p_reason: reason?.trim() || undefined });
+}

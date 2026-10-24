@@ -1,0 +1,37 @@
+# Parcours principal sur simulateur (dev build) : maestro test e2e/maestro/parcours-principal.yaml
+# Prérequis : Supabase local avec le seed, app lancée avec .env local.
+# Le code courriel est lu dans Mailpit par le script JS (mêmes étapes que scripts/e2e-web.mjs).
+appId: app.partants.mobile
+env:
+  EMAIL: e2e-maestro@partants.test
+---
+- launchApp:
+    clearState: true
+- tapOn: "Passer"
+- assertVisible: "À venir"
+- tapOn:
+    text: "Basket 3 contre 3.*"
+    index: 0
+- assertVisible: "Quand"
+- tapOn:
+    text: "Je suis partant"
+    index: -1
+- assertVisible: "Connecte-toi pour réserver ta place"
+- tapOn: "Continuer avec un courriel"
+- inputText: ${EMAIL}
+- tapOn: "Continuer"
+- runScript:
+    file: read-code.js
+    env:
+      EMAIL: ${EMAIL}
+- tapOn: "Code à 6 chiffres"
+- inputText: ${output.code}
+- tapOn: "Valider le code"
+- assertVisible: "Dernière étape"
+- tapOn: "Ton prénom (ou surnom)"
+- inputText: "Léa"
+- tapOn: "Date de naissance"
+- inputText: "19900512"
+- tapOn: "J'accepte les conditions.*"
+- tapOn: "Terminer"
+- assertVisible: "Tu y es"

@@ -62,3 +62,13 @@ describe('nextDays', () => {
     expect(second!.to).toBe('2026-10-25T03:59:59.999Z');
   });
 });
+
+describe('formatDuration', () => {
+  it('formate en français et en anglais', () => {
+    const { formatDuration } = jest.requireActual('../time');
+    expect(formatDuration(45)).toBe('45 min');
+    expect(formatDuration(120)).toBe('2 h');
+    expect(formatDuration(90)).toBe('1 h 30');
+    expect(formatDuration(90, 'en')).toBe('1h 30m');
+  });
+});

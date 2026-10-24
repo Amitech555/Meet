@@ -128,3 +128,12 @@ export function nextDays(n: number, now: Date = new Date()): { from: string; to:
     return { from: utc(startOfDay(d)), to: utc(endOfDay(d)) };
   });
 }
+
+/** Durée lisible : « 45 min », « 2 h », « 1 h 30 » (fr) / « 1h 30m » (en). */
+export function formatDuration(minutes: number, locale: AppLocale = 'fr'): string {
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (locale === 'en') return m ? `${h}h ${m}m` : `${h}h`;
+  return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
+}
