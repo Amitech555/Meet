@@ -26,8 +26,8 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 | (c) | Onboarding + choix de ville + intérêts | ✅ fait |
 | (d) | Feed Découvrir + filtres + carte + recherche | ✅ fait (carte native à valider sur appareil) |
 | (e) | Détail de session + rejoindre/quitter + liste d'attente | ✅ fait |
-| (f) | Créer une session | ⏳ en cours |
-| (g) | Groupes + chat Realtime | à faire |
+| (f) | Créer une session | ✅ fait |
+| (g) | Groupes + chat Realtime | ⏳ en cours |
 | (h) | Profil + avis + check-in | à faire |
 | (i) | Notifications | à faire |
 
@@ -70,6 +70,15 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Signalement de session ; liens universels `/s/<id>`.
 - **Parcours principal testé de bout en bout** (`npm run e2e:web`, Supabase local + Mailpit) : feed anonyme en ~1,5 s → session → connexion par code → 18+ → inscription rejouée → « Tu y es ». Flux Maestro équivalent pour mobile (`e2e/maestro`).
 - Bugs trouvés et corrigés par ce test : courriel sans code (gabarit FR avec `{{ .Token }}`), canal Realtime réutilisé au retour d'auth (écran blanc) → nom unique + ErrorBoundary global.
+
+### (f) — fait
+- Assistant Quoi → Quand → Où → Détails sur un seul flux, aperçu en direct de la carte en haut.
+- Valeurs par défaut : prochain samedi 10 h, 90 min, 8 places, gratuit, tous niveaux, désistement souple.
+- « Refaire une session passée » en premier choix (et « Refaire la même » depuis le détail : même heure, semaine suivante).
+- Quand : 21 prochains jours, heures fréquentes + ajustement ±15 min, durées, récurrence hebdo / aux 2 semaines (occurrences créées côté serveur).
+- Où : recherche Mapbox Geocoding biaisée Montréal, repli sur lieux connus sans jeton ; mini-carte du repère.
+- Détails : places min/max (compteurs accessibles), niveau, prix (paiement sur place, Phase 2 Stripe), politique d'annulation, photo de couverture (Storage) ou couverture générée, publication dans un groupe dont on est admin.
+- Validation client testée + revalidation serveur ; e2e : création publiée en ~3 s.
 
 ## Décisions
 

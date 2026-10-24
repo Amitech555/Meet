@@ -94,6 +94,30 @@ try {
   const birth = execSync(`psql "${DB_URL}" -qAt -c "select adult_confirmed_at is not null from public.profiles p join auth.users u on u.id = p.id where u.email = '${email}'"`).toString().trim();
   if (birth !== 't') throw new Error('18+ non confirmé');
   step('18+ confirmé, date de naissance non stockée');
+
+  // Création d'une session (Quoi → Quand → Où → Détails)
+  const tc = Date.now();
+  await page.goto(`${base}/create`, { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: 'Course & marche' }).first().click();
+  await page.getByLabel('Titre').fill('Sortie e2e au canal');
+  await page.screenshot({ path: 'screenshots/e2e-create-what.png' });
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByRole('button', { name: '19:00' }).click();
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByLabel('Nom du lieu').fill('Marché Atwater');
+  await page.getByLabel('Chercher une adresse').fill('atwater');
+  await page.getByRole('button', { name: /Marché Atwater, 138/ }).click();
+  await page.screenshot({ path: 'screenshots/e2e-create-where.png' });
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByRole('button', { name: 'Publier la session' }).click();
+  await page.getByText('Sortie e2e au canal').first().waitFor({ timeout: 10000 });
+  await page.getByRole('button', { name: 'Gérer' }).last().waitFor();
+  step(`session créée et publiée en ${Math.round((Date.now() - tc) / 1000)} s (organisateur inscrit d'office)`);
+  await page.screenshot({ path: 'screenshots/e2e-created.png' });
+  const created = execSync(`psql "${DB_URL}" -qAt -c "select places_taken || '/' || max_players from public.sessions s join auth.users u on u.id = s.host_id where u.email = '${email}'"`).toString().trim();
+  if (created !== '1/8') throw new Error(`session créée inattendue : ${created}`);
+  step('base : session 1/8 (valeurs par défaut : 8 places)');
+
   console.log('\nPARCOURS PRINCIPAL OK');
 } catch (e) {
   await page.screenshot({ path: 'screenshots/e2e-failure.png' });
@@ -101,7 +125,7 @@ try {
   if (errors.length) console.error('Erreurs JS :', errors);
   process.exitCode = 1;
 } finally {
-  execSync(`psql "${DB_URL}" -qAt -c "delete from auth.users where email = '${email}'"`);
+  execSync(`psql "${DB_URL}" -qAt -c "delete from public.sessions where host_id in (select id from auth.users where email = '${email}'); delete from auth.users where email = '${email}'"`);
   await browser.close();
   server.close();
 }
