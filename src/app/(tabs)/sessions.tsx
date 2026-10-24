@@ -13,13 +13,15 @@ import { SessionCard } from '@/components/session/SessionCard';
 import { SignInPrompt } from '@/components/SignInPrompt';
 import { useMySessions } from '@/features/profile/hooks';
 import { useJoinFlow } from '@/features/sessions/useJoinFlow';
+import { useSavedSessions } from '@/features/sessions/hooks';
 import { useRequireAuth } from '@/features/auth/useRequireAuth';
 import { useAuth, useUserId } from '@/stores/auth';
 import { useTheme } from '@/design/theme';
 import { errorMessage } from '@/lib/errors';
 import type { MySession } from '@/features/profile/api';
+import type { SessionSummary } from '@/features/sessions/types';
 
-type Kind = 'upcoming' | 'past' | 'hosting';
+type Kind = 'upcoming' | 'past' | 'hosting' | 'saved';
 
 function ActionBanner({ label, onPress }: { label: string; onPress: () => void }) {
   const { colors } = useTheme();
@@ -43,19 +45,22 @@ export default function MySessions() {
   const uid = useUserId();
   const requireAuth = useRequireAuth();
   const [kind, setKind] = useState<Kind>('upcoming');
-  const q = useMySessions(kind);
+  const mine = useMySessions(kind === 'saved' ? 'upcoming' : kind);
+  const saved = useSavedSessions();
+  const q = kind === 'saved' ? saved : mine;
   const hosting = useMySessions('hosting');
   const past = useMySessions('past');
   const { requestJoin, sheet } = useJoinFlow();
 
   const toCheckin = hosting.data?.filter((s) => s.needs_checkin) ?? [];
   const toReview = past.data?.filter((s) => s.needs_review) ?? [];
-  const open = (s: MySession) => router.push({ pathname: '/session/[id]', params: { id: s.id } });
+  const open = (s: SessionSummary) => router.push({ pathname: '/session/[id]', params: { id: s.id } });
 
   const empty = {
     upcoming: { title: t('mySessions.emptyUpcoming'), action: t('mySessions.findSession'), onPress: () => router.push('/') },
     past: { title: t('mySessions.emptyPast'), action: undefined, onPress: undefined },
     hosting: { title: t('mySessions.emptyHosting'), action: t('discover.emptyCta'), onPress: () => requireAuth({ type: 'create' }) && router.push('/create') },
+    saved: { title: t('mySessions.emptySaved'), action: t('mySessions.findSession'), onPress: () => router.push('/') },
   }[kind];
 
   return (
@@ -78,11 +83,11 @@ export default function MySessions() {
           {toReview.slice(0, 1).map((s) => (
             <ActionBanner key={`r-${s.id}`} label={t('mySessions.toReview')} onPress={() => router.push({ pathname: '/session/[id]/review', params: { id: s.id } })} />
           ))}
-          <View className="flex-row gap-2" accessibilityRole="tablist">
-            {(['upcoming', 'past', 'hosting'] as Kind[]).map((k) => (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2" accessibilityRole="tablist">
+            {(['upcoming', 'past', 'hosting', 'saved'] as Kind[]).map((k) => (
               <Pill key={k} label={t(`mySessions.${k}`)} selected={kind === k} onPress={() => setKind(k)} />
             ))}
-          </View>
+          </ScrollView>
           {q.isLoading ? (
             [0, 1, 2].map((i) => <SessionCardSkeleton key={i} index={i} />)
           ) : q.isError ? (
@@ -91,7 +96,7 @@ export default function MySessions() {
             q.data.map((s) => (
               <View key={s.id} className="gap-2">
                 <SessionCard session={s} onPress={() => open(s)} onJoin={() => requestJoin(s)} onManage={() => open(s)} currentUserId={uid} />
-                {kind === 'past' && s.needs_review ? (
+                {kind === 'past' && (s as MySession).needs_review ? (
                   <Pill size="sm" icon={Icons.ThumbsUp} label={t('review.title')} onPress={() => router.push({ pathname: '/session/[id]/review', params: { id: s.id } })} />
                 ) : null}
                 {kind === 'hosting' && s.status === 'completed' ? (

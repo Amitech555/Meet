@@ -8,7 +8,8 @@ Plan, décisions et avancement : `ROADMAP.md`. Mise en route : `README.md`.
 npm run typecheck      # tsc strict
 npm run lint           # eslint (règles Expo + React Compiler + « pas de hex en dur »)
 npm test               # jest (logique, i18n, contrastes)
-npm run db:test        # migrations + seed + tests pgTAP sur un Postgres/PostGIS local
+npm run db:test        # supabase db reset + tests pgTAP + test de concurrence (Supabase local via Docker)
+npm run e2e:web        # parcours principal de bout en bout (après npm run export:web)
 npm run export:web && npm run screens -- /styleguide --full   # captures SE / grand / sombre
 ```
 Toujours lancer typecheck + lint + test avant de committer.
@@ -41,3 +42,11 @@ api.expo.dev : `EXPO_OFFLINE=1 npx expo install <pkg>`.
 - TypeScript 6 : `types` est explicite dans tsconfig (`jest`, `node`) ; pas de `baseUrl`.
 - `react-native-worklets` : `scheduleOnRN` remplace `runOnJS`.
 - MapLibre exige un *dev build* (`expo-dev-client`), pas Expo Go.
+
+## Pièges déjà rencontrés
+- Seed `auth.users` : les colonnes `*_token` doivent valoir `''` (pas NULL), sinon GoTrue refuse la connexion.
+- Courriel de connexion : le gabarit doit contenir `{{ .Token }}` (code à 6 chiffres), sinon Supabase n'envoie qu'un lien magique.
+- Realtime : un nom de canal unique par instance (`useId()`), sinon supabase-js lève une erreur quand un écran est monté deux fois.
+- `join_session` utilise `clock_timestamp()` : `now()` est figé dans une transaction et casserait l'ordre de la liste d'attente.
+- Mutations TanStack en `networkMode: 'always'` : hors-ligne, l'échec doit être immédiat (rollback), pas mis en pause.
+- Edge Functions : pas de dépendance JSR/npm (mini-client REST dans `_shared/rest.ts`).

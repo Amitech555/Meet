@@ -254,7 +254,9 @@
     "emptyHosting": "Tu n'organises rien pour l'instant. Lance une session en 2 minutes.",
     "findSession": "Trouver une session",
     "toReview": "Donne ton avis sur ta dernière session",
-    "toCheckin": "Fais l'appel pour {{title}}"
+    "toCheckin": "Fais l'appel pour {{title}}",
+    "saved": "Sauvegardées",
+    "emptySaved": "Sauvegarde une session pour la retrouver ici."
   },
   "groups": {
     "title": "Groupes",

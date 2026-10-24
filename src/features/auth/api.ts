@@ -5,6 +5,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '@/lib/supabase';
 import { rpc } from '@/lib/rpc';
 import { toAppError } from '@/lib/errors';
+import { persister, queryClient } from '@/lib/queryClient';
 
 export const TERMS_VERSION = '2026-10-24';
 
@@ -60,11 +61,14 @@ export async function completeProfile(input: { displayName: string; birthdate: s
   });
 }
 
+/** Déconnexion : on vide aussi le cache persistant (données personnelles hors-ligne). */
 export async function signOut() {
   await supabase.auth.signOut();
+  queryClient.clear();
+  await persister.removeClient();
 }
 
 export async function deleteAccount() {
   await rpc('delete_my_account');
-  await supabase.auth.signOut();
+  await signOut();
 }

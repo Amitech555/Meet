@@ -1,4 +1,6 @@
 import { rpc } from '@/lib/rpc';
+import { supabase } from '@/lib/supabase';
+import { toAppError } from '@/lib/errors';
 import { rangeFor } from '@/lib/time';
 import type { FeedFilters } from '@/stores/prefs';
 import type { LatLng } from '@/lib/geo';
@@ -59,3 +61,12 @@ export function setGuest(id: string, guest: boolean) {
 export function cancelSession(id: string, reason?: string) {
   return rpc('cancel_session', { p_session_id: id, p_reason: reason?.trim() || undefined });
 }
+
+export async function setSaved(userId: string, sessionId: string, saved: boolean) {
+  const { error } = saved
+    ? await supabase.from('saved_sessions').upsert({ user_id: userId, session_id: sessionId })
+    : await supabase.from('saved_sessions').delete().match({ user_id: userId, session_id: sessionId });
+  if (error) throw toAppError(error);
+}
+
+export const mySavedSessions = () => rpc<'my_saved_sessions', SessionSummary[]>('my_saved_sessions');

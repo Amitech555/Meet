@@ -254,7 +254,9 @@
     "emptyHosting": "You're not hosting anything yet. Start a session in 2 minutes.",
     "findSession": "Find a session",
     "toReview": "Rate your last session",
-    "toCheckin": "Take attendance for {{title}}"
+    "toCheckin": "Take attendance for {{title}}",
+    "saved": "Saved",
+    "emptySaved": "Save a session to find it here."
   },
   "groups": {
     "title": "Groups",

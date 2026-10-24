@@ -102,6 +102,24 @@ try {
   if (birth !== 't') throw new Error('18+ non confirmé');
   step('18+ confirmé, date de naissance non stockée');
 
+  // Hors-ligne : « Je suis partant » est annulé proprement (rollback + message humain), sans faux « Tu y es »
+  await page.goto(`${base}/session/c3000000-0000-4000-8000-000000000008`, { waitUntil: 'networkidle' });
+  await page.getByText('Soccer à 7 au parc Jarry').first().waitFor();
+  await ctx.setOffline(true);
+  await page.getByRole('button', { name: 'Je suis partant' }).last().click();
+  await page.getByText('Pas de réseau. On réessaie dès que tu es de retour.').waitFor({ timeout: 10000 });
+  await page.getByRole('button', { name: 'Je suis partant' }).last().waitFor();
+  await ctx.setOffline(false);
+  step('hors-ligne : rollback + « Pas de réseau »');
+
+  // Favori : sauvegarder puis retrouver dans Mes sessions › Sauvegardées
+  await page.getByRole('button', { name: 'Sauvegarder' }).click();
+  await page.getByRole('button', { name: 'Sauvegardée' }).waitFor();
+  await page.goto(`${base}/sessions`, { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: 'Sauvegardées' }).click();
+  await page.getByText('Soccer à 7 au parc Jarry').first().waitFor({ timeout: 10000 });
+  step('favori sauvegardé et retrouvé');
+
   // Création d'une session (Quoi → Quand → Où → Détails)
   const tc = Date.now();
   await page.goto(`${base}/create`, { waitUntil: 'networkidle' });

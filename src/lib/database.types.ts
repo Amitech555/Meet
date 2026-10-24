@@ -598,6 +598,9 @@ isOneToOne: false
 "my_past_hosted":
 { Args: { "p_limit"?: number }; Returns: Json
                            },
+"my_saved_sessions":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "my_sessions":
 { Args: { "p_kind": string,"p_limit"?: number }; Returns: Json
                            },

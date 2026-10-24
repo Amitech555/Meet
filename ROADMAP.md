@@ -104,6 +104,18 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Bug trouvé par l'e2e (horloge) et corrigé en migration 009 : « J'organise » perdait les sessions à pointer après 24 h.
 - Limite de l'environnement : l'API Expo Push n'est pas joignable d'ici ; testé jusqu'à l'appel réseau (réessai vérifié).
 
+### Revue de fin de phase — corrigé
+- **Fuite de vie privée** : les abonnés d'un organisateur étaient prévenus des sessions de ses groupes privés → filtrés (migration 010 + test).
+- **Anti-spam** : 5 groupes et 20 signalements par 24 h (en plus de 10 sessions/24 h et 20 messages/min).
+- **Hors-ligne** : « Je suis partant » sans réseau restait affiché comme réussi (mutation en pause) → échec immédiat, rollback, « Pas de réseau ».
+- P1 ajoutés : **favoris** (onglet Sauvegardées) et **lecture hors-ligne** des sessions déjà vues (cache persistant 24 h, vidé à la déconnexion).
+- Métriques en base (migration 011) : `metrics.weekly` (remplissage, présence, offre) et `metrics.cohorts` (activation 48 h, 2e session en 14 j).
+- Vérification complète depuis zéro : 11 migrations + seed, 81 tests pgTAP, concurrence 30/10, 54 tests Jest, typecheck, lint, e2e (17 vérifications).
+
+### Pas encore vérifié (hors de portée de ce conteneur)
+- Rendu natif iOS/Android (testé en web : même code React Native) — dont la carte MapLibre, la connexion Apple/Google, les notifications push réelles (l'API Expo n'est pas joignable d'ici), le retour haptique.
+- Flux Maestro sur simulateur.
+
 ## Décisions
 
 | # | Décision | Raison |

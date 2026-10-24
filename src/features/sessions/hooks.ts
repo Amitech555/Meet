@@ -1,10 +1,11 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { cancelSession, fetchFeed, fetchSession, joinSeries, joinSession, leaveSession, setGuest, FEED_PAGE, type FeedCursor } from './api';
+import { cancelSession, mySavedSessions, setSaved, fetchFeed, fetchSession, joinSeries, joinSession, leaveSession, setGuest, FEED_PAGE, type FeedCursor } from './api';
 import { restoreSnapshot, updateSessionEverywhere } from './cache';
 import { optimisticJoin, optimisticLeave, reconcileJoin } from './optimistic';
-import type { SessionSummary } from './types';
+import type { SessionSummary , SessionDetail } from './types';
 import { useCities, MONTREAL_SLUG } from '@/features/catalog/hooks';
+import { useUserId } from '@/stores/auth';
 import { useMe } from '@/features/auth/hooks';
 import { usePrefs, type FeedFilters } from '@/stores/prefs';
 import { useLocationStore } from '@/stores/location';
@@ -149,5 +150,31 @@ export function useCancelSession() {
     },
     onError: (e) => toast(errorMessage(e, t), 'error'),
     onSettled: (_r, _e, { session }) => invalidateAfterChange(qc, session.id),
+  });
+}
+
+export function useSavedSessions() {
+  const uid = useUserId();
+  return useQuery({ queryKey: ['my-sessions', 'saved', uid], enabled: !!uid, queryFn: mySavedSessions });
+}
+
+/** Favori : bascule optimiste sur le détail, liste rafraîchie. */
+export function useToggleSaved() {
+  const qc = useQueryClient();
+  const { t } = useTranslation();
+  const uid = useUserId();
+  return useMutation({
+    mutationFn: ({ id, saved }: { id: string; saved: boolean }) => setSaved(uid!, id, saved),
+    onMutate: ({ id, saved }) => {
+      const prev = qc.getQueryData<SessionDetail | null>(sessionKey(id));
+      if (prev) qc.setQueryData(sessionKey(id), { ...prev, is_saved: saved });
+      return prev;
+    },
+    onSuccess: (_r, { saved }) => toast(saved ? t('session.saved') : t('session.save')),
+    onError: (e, { id }, prev) => {
+      if (prev) qc.setQueryData(sessionKey(id), prev);
+      toast(errorMessage(e, t), 'error');
+    },
+    onSettled: () => void qc.invalidateQueries({ queryKey: ['my-sessions', 'saved'] }),
   });
 }

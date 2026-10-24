@@ -51,9 +51,23 @@ Aucun secret dans le dépôt : les clés serveur (Stripe, Expo push) vont dans `
 | `npm run typecheck` | TypeScript strict |
 | `npm run lint` | ESLint (Expo + React Compiler + interdiction des couleurs en dur) |
 | `npm test` | Tests Jest (temps/fuseau, argent, i18n, contrastes AA, logique métier) |
-| `npm run db:test` | Migrations + seed + tests pgTAP (RLS, concurrence sur la dernière place, liste d'attente) |
+| `npm run db:test` | Migrations + seed + 81 tests pgTAP + test de concurrence réel |
+| `npm run db:race` | Seul le test de concurrence : 30 connexions simultanées sur 10 places |
 | `npm run db:reset` | Réinitialise la base de dev avec le seed |
+| `npm run db:types` | Régénère `src/lib/database.types.ts` depuis le schéma local |
+| `npm run e2e:web` | Parcours principal de bout en bout (export web + Supabase local + Mailpit) |
+| `npm run e2e:mobile` | Même parcours avec Maestro sur simulateur (dev build) |
 | `npm run export:web && npm run screens -- /styleguide --full` | Captures iPhone SE / grand écran / sombre dans `screenshots/` |
+
+## Comptes de démo (seed local)
+
+`demo+camille@partants.app`, `demo+karim@partants.app`, … — mot de passe `partants-demo`.
+Dans l'app, la connexion se fait par code à 6 chiffres : en local, les courriels arrivent dans Mailpit (http://127.0.0.1:54324).
+
+## Documentation
+
+- [`LAUNCH_CHECKLIST.md`](LAUNCH_CHECKLIST.md) — comptes, Supabase prod, légal (Loi 25), lancement à Montréal
+- [`docs/ANALYTICS.md`](docs/ANALYTICS.md) — événements PostHog, tableau de bord, vues SQL de métriques
 
 ## Structure
 
@@ -65,6 +79,7 @@ src/stores/         Zustand (préférences, auth différée, toasts)
 src/lib/            utilitaires (temps, argent, géo, client Supabase)
 src/i18n/           fr.json, en.json
 design/tokens.ts    source unique du design
-supabase/           migrations, seed, tests pgTAP, Edge Functions
+supabase/           11 migrations, seed, tests pgTAP, Edge Functions (send-push, share), gabarit courriel
+e2e/maestro/        parcours principal mobile
 scripts/            captures, reset de la base
 ```

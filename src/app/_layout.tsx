@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useColorScheme } from 'nativewind';
 import { BricolageGrotesque_700Bold, BricolageGrotesque_800ExtraBold } from '@expo-google-fonts/bricolage-grotesque';
 import { Geist_400Regular, Geist_500Medium, Geist_600SemiBold, Geist_700Bold } from '@expo-google-fonts/geist';
@@ -16,7 +16,7 @@ import { ThemeProvider, useTheme } from '@/design/theme';
 import { ToastHost } from '@/components/ui/Toast';
 import { PushPrompt } from '@/components/PushPrompt';
 import { usePushRouting } from '@/features/notifications/hooks';
-import { queryClient } from '@/lib/queryClient';
+import { persistOptions, queryClient } from '@/lib/queryClient';
 import { useAuthListener } from '@/features/auth/useAuthListener';
 import { usePrefs } from '@/stores/prefs';
 import { initMonitoring } from '@/lib/monitoring';
@@ -80,11 +80,11 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
           <ThemeProvider>
             <Navigator />
           </ThemeProvider>
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

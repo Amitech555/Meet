@@ -23,7 +23,7 @@ import { JoinButton, joinStateFor } from '@/components/session/JoinButton';
 import { MiniMap } from '@/components/session/MiniMap';
 import { useDayLabel } from '@/components/session/TimeBlock';
 import { ReportSheet } from '@/components/ReportSheet';
-import { useCancelSession, useJoinSeries, useLeaveSession, useSession, useSetGuest } from '@/features/sessions/hooks';
+import { useCancelSession, useJoinSeries, useLeaveSession, useSession, useSetGuest, useToggleSaved } from '@/features/sessions/hooks';
 import { useJoinFlow } from '@/features/sessions/useJoinFlow';
 import { useSessionRealtime } from '@/features/sessions/useSessionRealtime';
 import { addSessionToCalendar, mapsUrl, shareSession } from '@/features/sessions/share';
@@ -85,6 +85,7 @@ export default function SessionScreen() {
   const setGuest = useSetGuest();
   const cancel = useCancelSession();
   const joinSeries = useJoinSeries();
+  const toggleSaved = useToggleSaved();
   const requireAuth = useRequireAuth();
   const [manageOpen, setManageOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -325,7 +326,15 @@ export default function SessionScreen() {
       {/* Barre du haut, par-dessus la couverture */}
       <View className="absolute left-0 right-0 flex-row justify-between px-4" style={{ top: insets.top + 8 }}>
         <IconButton icon={Icons.ArrowLeft} label={t('common.back')} variant="overlay" onPress={back} />
-        <IconButton icon={Icons.ShareNetwork} label={t('common.share')} variant="overlay" onPress={() => void shareSession(detail, t)} />
+        <View className="flex-row gap-2">
+          <IconButton
+            icon={Icons.BookmarkSimple}
+            label={detail.is_saved ? t('session.saved') : t('session.save')}
+            variant={detail.is_saved ? 'ink' : 'overlay'}
+            onPress={() => (userId ? toggleSaved.mutate({ id: detail.id, saved: !detail.is_saved }) : router.push('/auth'))}
+          />
+          <IconButton icon={Icons.ShareNetwork} label={t('common.share')} variant="overlay" onPress={() => void shareSession(detail, t)} />
+        </View>
       </View>
 
       {/* Barre inférieure collante : prix + grand bouton */}
