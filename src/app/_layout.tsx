@@ -14,6 +14,8 @@ import { BricolageGrotesque_700Bold, BricolageGrotesque_800ExtraBold } from '@ex
 import { Geist_400Regular, Geist_500Medium, Geist_600SemiBold, Geist_700Bold } from '@expo-google-fonts/geist';
 import { ThemeProvider, useTheme } from '@/design/theme';
 import { ToastHost } from '@/components/ui/Toast';
+import { PushPrompt } from '@/components/PushPrompt';
+import { usePushRouting } from '@/features/notifications/hooks';
 import { queryClient } from '@/lib/queryClient';
 import { useAuthListener } from '@/features/auth/useAuthListener';
 import { usePrefs } from '@/stores/prefs';
@@ -30,6 +32,7 @@ export { ErrorBoundary } from '@/components/AppErrorBoundary';
 function Navigator() {
   const { scheme, colors } = useTheme();
   useAuthListener();
+  usePushRouting();
   return (
     <>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
@@ -39,6 +42,7 @@ function Navigator() {
         <Stack.Screen name="styleguide" />
       </Stack>
       <ToastHost />
+      <PushPrompt />
     </>
   );
 }

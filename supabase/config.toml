@@ -423,3 +423,9 @@ content_path = "./supabase/templates/code.html"
 [auth.email.template.confirmation]
 subject = "Ton code Partants : {{ .Token }}"
 content_path = "./supabase/templates/code.html"
+
+[functions.send-push]
+verify_jwt = false
+
+[functions.share]
+verify_jwt = false

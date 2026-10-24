@@ -22,6 +22,7 @@ type PrefsState = {
   interests: number[];
   theme: 'system' | 'light' | 'dark';
   locale: 'fr' | 'en' | null;
+  pushAsked: boolean;
   filters: FeedFilters;
   view: 'list' | 'map';
   setOnboarded: (v: boolean) => void;
@@ -29,6 +30,7 @@ type PrefsState = {
   setInterests: (ids: number[]) => void;
   setTheme: (t: PrefsState['theme']) => void;
   setLocale: (l: 'fr' | 'en') => void;
+  setPushAsked: () => void;
   setFilters: (f: Partial<FeedFilters>) => void;
   resetFilters: () => void;
   setView: (v: 'list' | 'map') => void;
@@ -43,6 +45,7 @@ export const usePrefs = create<PrefsState>()(
       interests: [],
       theme: 'system',
       locale: null,
+      pushAsked: false,
       filters: defaultFilters,
       view: 'list',
       setOnboarded: (onboarded) => set({ onboarded }),
@@ -50,6 +53,7 @@ export const usePrefs = create<PrefsState>()(
       setInterests: (interests) => set({ interests }),
       setTheme: (theme) => set({ theme }),
       setLocale: (locale) => set({ locale }),
+      setPushAsked: () => set({ pushAsked: true }),
       setFilters: (f) => set((s) => ({ filters: { ...s.filters, ...f } })),
       resetFilters: () => set({ filters: defaultFilters }),
       setView: (view) => set({ view }),
@@ -57,7 +61,7 @@ export const usePrefs = create<PrefsState>()(
     {
       name: 'partants-prefs',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ onboarded, cityId, interests, theme, locale, view }) => ({ onboarded, cityId, interests, theme, locale, view }),
+      partialize: ({ onboarded, cityId, interests, theme, locale, view, pushAsked }) => ({ onboarded, cityId, interests, theme, locale, view, pushAsked }),
     },
   ),
 );

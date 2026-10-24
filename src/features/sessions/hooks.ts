@@ -9,6 +9,7 @@ import { useMe } from '@/features/auth/hooks';
 import { usePrefs, type FeedFilters } from '@/stores/prefs';
 import { useLocationStore } from '@/stores/location';
 import { toast } from '@/stores/toast';
+import { usePushPromptStore } from '@/stores/pushPrompt';
 import { errorMessage } from '@/lib/errors';
 import { haptics } from '@/lib/haptics';
 import { track, trackDuration } from '@/lib/analytics';
@@ -77,6 +78,7 @@ export function useJoinSession() {
       updateSessionEverywhere(qc, session.id, (s) => reconcileJoin(s, res.status, res.places_taken));
       if (res.status === 'joined') {
         toast(t('session.joinedToast'), 'celebrate');
+        usePushPromptStore.getState().maybeOpen();
         track('session_joined', { category: session.category.slug, price_cents: session.price_cents });
       } else {
         toast(t('session.waitlistToast'));

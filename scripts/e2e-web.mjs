@@ -47,8 +47,15 @@ await ctx.addInitScript(() => {
   localStorage.setItem('partants-prefs', JSON.stringify({ state: { onboarded: true, cityId: 1, interests: [1, 2, 10], theme: 'system', view: 'list' }, version: 0 }));
 });
 const page = await ctx.newPage();
+let active = page; // page à capturer en cas d'échec
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
+
+// Rend le test rejouable : la session d'hier (seed n° 107) redevient « à pointer »
+execSync(`psql "${DB_URL}" -qAt -c "
+  delete from public.reviews where session_id = 'c3000000-0000-4000-8000-000000000107';
+  update public.session_participants set status = 'joined' where session_id = 'c3000000-0000-4000-8000-000000000107';
+  update public.sessions set status = 'published' where id = 'c3000000-0000-4000-8000-000000000107';"`);
 
 try {
   const t0 = Date.now();
@@ -137,6 +144,7 @@ try {
     localStorage.setItem('sb-127-auth-token', JSON.stringify(session));
   }, karim.session);
   const page2 = await ctx2.newPage();
+  active = page2;
   await page2.goto(`${base}/group/b2000000-0000-4000-8000-000000000001`, { waitUntil: 'networkidle' });
   await page2.getByRole('button', { name: 'Discussion' }).click();
   await page2.getByText('Bienvenue aux nouveaux').waitFor({ timeout: 10000 });
@@ -148,6 +156,7 @@ try {
   step('message reçu en direct par un autre membre (Realtime + RLS)');
   await page2.screenshot({ path: 'screenshots/e2e-group-chat.png' });
   await ctx2.close();
+  active = page;
 
 
   // Après la session : l'organisatrice (Camille) fait l'appel puis laisse des avis
@@ -158,6 +167,7 @@ try {
     localStorage.setItem('sb-127-auth-token', JSON.stringify(session));
   }, camille.session);
   const page3 = await ctx3.newPage();
+  active = page3;
   await page3.goto(`${base}/sessions`, { waitUntil: 'networkidle' });
   await page3.getByRole('button', { name: /Fais l'appel pour Basket du mercredi soir/ }).click();
   await page3.getByText('Qui était là ?').waitFor();
@@ -183,7 +193,7 @@ try {
 
   console.log('\nPARCOURS PRINCIPAL OK');
 } catch (e) {
-  await page.screenshot({ path: 'screenshots/e2e-failure.png' });
+  await active.screenshot({ path: 'screenshots/e2e-failure.png' }).catch(() => undefined);
   console.error('ÉCHEC :', e.message);
   if (errors.length) console.error('Erreurs JS :', errors);
   process.exitCode = 1;

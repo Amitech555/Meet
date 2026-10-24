@@ -529,6 +529,9 @@ isOneToOne: false
 "duplicate_session":
 { Args: { "p_session_id": string,"p_starts_at": string }; Returns: string
                            },
+"enqueue_reminders":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "f_unaccent":
 { Args: { "": string }; Returns: string
                            },
@@ -585,6 +588,12 @@ isOneToOne: false
                            },
 "list_messages":
 { Args: { "p_before"?: number,"p_group_id"?: string,"p_limit"?: number,"p_session_id"?: string }; Returns: Json
+                           },
+"list_notifications":
+{ Args: { "p_limit"?: number }; Returns: Json
+                           },
+"mark_notifications_read":
+{ Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "my_past_hosted":
 { Args: { "p_limit"?: number }; Returns: Json

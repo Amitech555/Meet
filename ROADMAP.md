@@ -29,7 +29,7 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 | (f) | Créer une session | ✅ fait |
 | (g) | Groupes + chat Realtime | ✅ fait |
 | (h) | Profil + avis + check-in + Mes sessions | ✅ fait |
-| (i) | Notifications | ⏳ en cours |
+| (i) | Notifications | ✅ fait (envoi push à valider sur appareil) |
 
 ### (a) — fait
 - Expo SDK 58 / RN 0.88 / React 19, Expo Router (routes dans `src/app`), TypeScript strict.
@@ -94,6 +94,15 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Profil public : suivre un organisateur, bloquer / débloquer, signaler. Aucun message privé (hors scope).
 - Après la session : « Qui était là ? » (tout coché, on décoche les absents) → avis 👍/👎 + tags en un tap par personne.
 - e2e : appel (1 absent), avis, profil vérifiés en base.
+
+### (i) — fait
+- Serveur : `enqueue_reminders()` toutes les 10 min (pg_cron) — rappels 24 h et 2 h, rappel d'appel 15 min après la fin, clôture auto des sessions non pointées après 3 jours ; idempotent (index unique).
+- Edge Function `send-push` (chaque minute via pg_cron + pg_net, secrets dans Vault) : textes FR/EN selon la langue du profil, lots de 100 vers l'API Expo, jetons morts supprimés, réessai si le réseau échoue, logs JSON.
+- Edge Function `share` : page Open Graph légère pour `/s/<id>` et `/g/<code>` (aperçu riche WhatsApp/SMS/Instagram, bouton « Ouvrir dans Partants », stores) + fichiers de liens universels.
+- App : permission demandée **après la première inscription** (« On te prévient ? »), jamais au lancement ; tap sur une notification → bon écran (session, appel, avis) ; liste des notifications avec pastille non lue sur la cloche.
+- Notifications aussi pour : place libérée, session annulée, nouvelle session d'un organisateur ou groupe suivi.
+- Bug trouvé par l'e2e (horloge) et corrigé en migration 009 : « J'organise » perdait les sessions à pointer après 24 h.
+- Limite de l'environnement : l'API Expo Push n'est pas joignable d'ici ; testé jusqu'à l'appel réseau (réessai vérifié).
 
 ## Décisions
 
