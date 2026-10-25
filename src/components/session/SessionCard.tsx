@@ -81,7 +81,8 @@ export const SessionCard = memo(function SessionCard({
   const left = spotsLeft(s);
   const now = useNow();
   const open = s.status === 'published' && new Date(s.starts_at).getTime() > now;
-  const state = joinStateFor(s.my_status, left, open, currentUserId === s.host.id);
+  const priorityLocked = !!s.priority_until && !s.i_have_priority;
+  const state = joinStateFor(s.my_status, left, open, currentUserId === s.host.id || !!s.can_manage, priorityLocked);
   const a11y = useA11yLabel(s);
   const { t } = useTranslation();
 
@@ -97,7 +98,7 @@ export const SessionCard = memo(function SessionCard({
   const footer = (
     <View className="flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2">
       <AvatarStack people={s.participants_preview} total={s.joined_count} max={3} size={28} />
-      <JoinButton state={state} onJoin={onJoin} onManage={onManage ?? onPress} loading={joining} />
+      <JoinButton state={state} onJoin={onJoin} onManage={onManage ?? onPress} loading={joining} priorityUntil={s.priority_until} />
     </View>
   );
 

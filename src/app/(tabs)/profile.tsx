@@ -172,6 +172,12 @@ export default function Profile() {
           }
         />
       ) : null}
+      {me.data && (me.data.sessions_hosted > 0 || me.data.is_admin) ? (
+        <View className="gap-2">
+          {me.data.sessions_hosted > 0 ? <Button label={t('host.open')} variant="ink" icon={Icons.ListBullets} onPress={() => router.push('/host')} /> : null}
+          {me.data.is_admin ? <Button label={t('admin.open')} variant="outline" icon={Icons.ShieldCheck} onPress={() => router.push('/admin')} /> : null}
+        </View>
+      ) : null}
       <Settings />
 
       <Sheet open={editing} onClose={() => setEditing(false)} title={t('profile.edit')}>

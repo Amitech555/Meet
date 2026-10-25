@@ -207,7 +207,58 @@ try {
   await page3.waitForTimeout(800);
   await page3.screenshot({ path: 'screenshots/e2e-profile.png' });
   step('profil : stats, fiabilité, tags');
+
+  // P2 — tableau de bord organisateur (Camille)
+  await page3.getByRole('button', { name: 'Mon tableau de bord' }).click();
+  await page3.getByText('Remplissage moyen').waitFor({ timeout: 10000 });
+  await page3.getByText('Tes réguliers').waitFor();
+  await page3.screenshot({ path: 'screenshots/e2e-host.png' });
+  step('tableau de bord organisateur');
+
+  // P2 — back-office : Camille (équipe) bannit l'auteur d'un signalement
+  await page3.goto(`${base}/admin`, { waitUntil: 'networkidle' });
+  await page3.getByText('Signalements').first().waitFor({ timeout: 10000 });
+  await page3.screenshot({ path: 'screenshots/e2e-admin.png' });
+  await page3.getByRole('button', { name: "Bannir l'auteur" }).first().click();
+  await page3.getByText('Signalement traité.').waitFor({ timeout: 10000 });
+  const banned = execSync(`psql "${DB_URL}" -qAt -c "select count(*) from public.profiles where is_banned"`).toString().trim();
+  if (banned !== '1') throw new Error(`bannis : ${banned}`);
+  await page3.getByRole('button', { name: 'Stats par ville' }).click();
+  await page3.getByText('Activation 48 h').waitFor();
+  await page3.screenshot({ path: 'screenshots/e2e-admin-stats.png' });
+  step('back-office : signalement traité (bannissement en base), stats par ville');
   await ctx3.close();
+
+  // P2 — fenêtre prioritaire : Léa (membre du groupe, pas de confiance) voit « Ouvre à … »
+  await page.goto(`${base}/session/c3000000-0000-4000-8000-000000000017`, { waitUntil: 'networkidle' });
+  await page.getByText(/Accès prioritaire pour les joueurs de confiance/).waitFor({ timeout: 10000 });
+  await page.getByRole('button', { name: /^Ouvre à/ }).last().waitFor();
+  await page.screenshot({ path: 'screenshots/e2e-priority.png' });
+  step('fenêtre prioritaire : inscription verrouillée pour un membre ordinaire');
+
+  // P2 — co-organisateurs : Karim (propriétaire) marque Léa joueuse de confiance → elle peut s'inscrire
+  const ctx4 = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, locale: 'fr-CA', timezoneId: 'America/Toronto' });
+  await ctx4.addInitScript((session) => {
+    localStorage.setItem('partants-prefs', JSON.stringify({ state: { onboarded: true, cityId: 1, interests: [], theme: 'system', view: 'list' }, version: 0 }));
+    localStorage.setItem('sb-127-auth-token', JSON.stringify(session));
+  }, (await sb.auth.signInWithPassword({ email: 'demo+karim@partants.app', password: 'partants-demo' })).data.session);
+  const page4 = await ctx4.newPage();
+  active = page4;
+  await page4.goto(`${base}/group/members/b2000000-0000-4000-8000-000000000001`, { waitUntil: 'networkidle' });
+  await page4.getByText('Co-organisateur').first().waitFor({ timeout: 10000 });
+  await page4.screenshot({ path: 'screenshots/e2e-members.png' });
+  console.log('  · liste des membres affichée');
+  await page4.getByRole('button', { name: 'Léa' }).click();
+  await page4.getByRole('button', { name: 'Marquer joueur de confiance' }).click();
+  await page4.getByText('Joueur de confiance').nth(3).waitFor({ timeout: 10000 });
+  console.log('  · Léa marquée joueuse de confiance');
+  await ctx4.close();
+  active = page;
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.getByText(/Tu as l'accès prioritaire/).waitFor({ timeout: 10000 });
+  await page.getByRole('button', { name: 'Je suis partant' }).last().click();
+  await page.getByRole('button', { name: 'Tu y es' }).last().waitFor({ timeout: 10000 });
+  step('joueuse de confiance → inscription pendant la fenêtre prioritaire');
 
   console.log('\nPARCOURS PRINCIPAL OK');
 } catch (e) {

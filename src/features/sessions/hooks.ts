@@ -49,6 +49,8 @@ export function useSession(id: string | undefined) {
   return useQuery({
     queryKey: sessionKey(id ?? ''),
     enabled: !!id,
+    // Places et droits changent vite : le cache (y compris hors-ligne) sert à l'affichage immédiat, on revalide toujours
+    refetchOnMount: 'always',
     queryFn: () => fetchSession(id!, position),
   });
 }

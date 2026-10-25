@@ -117,14 +117,14 @@ isOneToOne: false
                   ]
                 },"group_members": {
                   Row: {
-                    "group_id": string,"joined_at": string,"role": Database["public"]['Enums']["group_role"],"user_id": string
+                    "group_id": string,"joined_at": string,"role": Database["public"]['Enums']["group_role"],"trusted": boolean,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "group_id": string,"joined_at"?: string,"role"?: Database["public"]['Enums']["group_role"],"user_id": string
+                    "group_id": string,"joined_at"?: string,"role"?: Database["public"]['Enums']["group_role"],"trusted"?: boolean,"user_id": string
                   }
                   Update: {
-                    "group_id"?: string,"joined_at"?: string,"role"?: Database["public"]['Enums']["group_role"],"user_id"?: string
+                    "group_id"?: string,"joined_at"?: string,"role"?: Database["public"]['Enums']["group_role"],"trusted"?: boolean,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -293,14 +293,14 @@ isOneToOne: true
                   ]
                 },"profiles": {
                   Row: {
-                    "adult_confirmed_at": string | null,"avatar_url": string | null,"bio": string | null,"city_id": number | null,"created_at": string,"display_name": string,"id": string,"is_banned": boolean,"locale": string,"phone_verified_at": string | null,"terms_accepted_at": string | null,"terms_version": string | null,"updated_at": string
+                    "adult_confirmed_at": string | null,"avatar_url": string | null,"bio": string | null,"city_id": number | null,"created_at": string,"display_name": string,"id": string,"is_admin": boolean,"is_banned": boolean,"locale": string,"phone_verified_at": string | null,"terms_accepted_at": string | null,"terms_version": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "adult_confirmed_at"?: string | null,"avatar_url"?: string | null,"bio"?: string | null,"city_id"?: number | null,"created_at"?: string,"display_name"?: string,"id": string,"is_banned"?: boolean,"locale"?: string,"phone_verified_at"?: string | null,"terms_accepted_at"?: string | null,"terms_version"?: string | null,"updated_at"?: string
+                    "adult_confirmed_at"?: string | null,"avatar_url"?: string | null,"bio"?: string | null,"city_id"?: number | null,"created_at"?: string,"display_name"?: string,"id": string,"is_admin"?: boolean,"is_banned"?: boolean,"locale"?: string,"phone_verified_at"?: string | null,"terms_accepted_at"?: string | null,"terms_version"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "adult_confirmed_at"?: string | null,"avatar_url"?: string | null,"bio"?: string | null,"city_id"?: number | null,"created_at"?: string,"display_name"?: string,"id"?: string,"is_banned"?: boolean,"locale"?: string,"phone_verified_at"?: string | null,"terms_accepted_at"?: string | null,"terms_version"?: string | null,"updated_at"?: string
+                    "adult_confirmed_at"?: string | null,"avatar_url"?: string | null,"bio"?: string | null,"city_id"?: number | null,"created_at"?: string,"display_name"?: string,"id"?: string,"is_admin"?: boolean,"is_banned"?: boolean,"locale"?: string,"phone_verified_at"?: string | null,"terms_accepted_at"?: string | null,"terms_version"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -437,14 +437,14 @@ isOneToOne: false
                   ]
                 },"sessions": {
                   Row: {
-                    "address": string | null,"cancellation_policy": Database["public"]['Enums']["cancellation_policy"],"cancelled_reason": string | null,"category_id": number,"city_id": number,"cover_blurhash": string | null,"cover_url": string | null,"created_at": string,"currency": string,"description": string | null,"ends_at": string,"group_id": string | null,"host_id": string | null,"id": string,"level": Database["public"]['Enums']["session_level"],"location": unknown,"max_players": number,"min_players": number,"places_taken": number,"price_cents": number,"recurrence_rule": string | null,"search_text": string | null,"series_id": string | null,"starts_at": string,"status": Database["public"]['Enums']["session_status"],"title": string,"updated_at": string,"venue_name": string,"waitlist_count": number
+                    "address": string | null,"cancellation_policy": Database["public"]['Enums']["cancellation_policy"],"cancelled_reason": string | null,"category_id": number,"city_id": number,"cover_blurhash": string | null,"cover_url": string | null,"created_at": string,"currency": string,"description": string | null,"ends_at": string,"group_id": string | null,"host_id": string | null,"id": string,"level": Database["public"]['Enums']["session_level"],"location": unknown,"max_players": number,"min_players": number,"places_taken": number,"price_cents": number,"priority_until": string | null,"recurrence_rule": string | null,"search_text": string | null,"series_id": string | null,"starts_at": string,"status": Database["public"]['Enums']["session_status"],"title": string,"updated_at": string,"venue_name": string,"waitlist_count": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"cancellation_policy"?: Database["public"]['Enums']["cancellation_policy"],"cancelled_reason"?: string | null,"category_id": number,"city_id": number,"cover_blurhash"?: string | null,"cover_url"?: string | null,"created_at"?: string,"currency"?: string,"description"?: string | null,"ends_at": string,"group_id"?: string | null,"host_id"?: string | null,"id"?: string,"level"?: Database["public"]['Enums']["session_level"],"location": unknown,"max_players": number,"min_players"?: number,"places_taken"?: number,"price_cents"?: number,"recurrence_rule"?: string | null,"search_text"?: never,"series_id"?: string | null,"starts_at": string,"status"?: Database["public"]['Enums']["session_status"],"title": string,"updated_at"?: string,"venue_name": string,"waitlist_count"?: number
+                    "address"?: string | null,"cancellation_policy"?: Database["public"]['Enums']["cancellation_policy"],"cancelled_reason"?: string | null,"category_id": number,"city_id": number,"cover_blurhash"?: string | null,"cover_url"?: string | null,"created_at"?: string,"currency"?: string,"description"?: string | null,"ends_at": string,"group_id"?: string | null,"host_id"?: string | null,"id"?: string,"level"?: Database["public"]['Enums']["session_level"],"location": unknown,"max_players": number,"min_players"?: number,"places_taken"?: number,"price_cents"?: number,"priority_until"?: string | null,"recurrence_rule"?: string | null,"search_text"?: never,"series_id"?: string | null,"starts_at": string,"status"?: Database["public"]['Enums']["session_status"],"title": string,"updated_at"?: string,"venue_name": string,"waitlist_count"?: number
                   }
                   Update: {
-                    "address"?: string | null,"cancellation_policy"?: Database["public"]['Enums']["cancellation_policy"],"cancelled_reason"?: string | null,"category_id"?: number,"city_id"?: number,"cover_blurhash"?: string | null,"cover_url"?: string | null,"created_at"?: string,"currency"?: string,"description"?: string | null,"ends_at"?: string,"group_id"?: string | null,"host_id"?: string | null,"id"?: string,"level"?: Database["public"]['Enums']["session_level"],"location"?: unknown,"max_players"?: number,"min_players"?: number,"places_taken"?: number,"price_cents"?: number,"recurrence_rule"?: string | null,"search_text"?: never,"series_id"?: string | null,"starts_at"?: string,"status"?: Database["public"]['Enums']["session_status"],"title"?: string,"updated_at"?: string,"venue_name"?: string,"waitlist_count"?: number
+                    "address"?: string | null,"cancellation_policy"?: Database["public"]['Enums']["cancellation_policy"],"cancelled_reason"?: string | null,"category_id"?: number,"city_id"?: number,"cover_blurhash"?: string | null,"cover_url"?: string | null,"created_at"?: string,"currency"?: string,"description"?: string | null,"ends_at"?: string,"group_id"?: string | null,"host_id"?: string | null,"id"?: string,"level"?: Database["public"]['Enums']["session_level"],"location"?: unknown,"max_players"?: number,"min_players"?: number,"places_taken"?: number,"price_cents"?: number,"priority_until"?: string | null,"recurrence_rule"?: string | null,"search_text"?: never,"series_id"?: string | null,"starts_at"?: string,"status"?: Database["public"]['Enums']["session_status"],"title"?: string,"updated_at"?: string,"venue_name"?: string,"waitlist_count"?: number
                   }
                   Relationships: [
                     {
@@ -505,7 +505,22 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "can_view_session":
+            "admin_city_stats":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"admin_list_reports":
+{ Args: { "p_limit"?: number,"p_status"?: Database["public"]['Enums']["report_status"] }; Returns: Json
+                           },
+"admin_resolve_report":
+{ Args: { "p_action": string,"p_report_id": number,"p_status": Database["public"]['Enums']["report_status"] }; Returns: undefined
+                           },
+"admin_unban":
+{ Args: { "p_user_id": string }; Returns: undefined
+                           },
+"can_manage_session":
+{ Args: { "p_session_id": string,"p_user_id"?: string }; Returns: boolean
+                           },
+"can_view_session":
 { Args: { "p_session_id": string,"p_user_id"?: string }; Returns: boolean
                            },
 "cancel_session":
@@ -553,6 +568,12 @@ isOneToOne: false
 "group_card_json":
 { Args: { "g": Omit<Database["public"]['Tables']["groups"]['Row'], Database["public"]['Tables']["groups"]['ComputedFields']> }; Returns: Json
                            },
+"group_members_list":
+{ Args: { "p_group_id": string }; Returns: Json
+                           },
+"host_dashboard":
+{ Args: { "p_days"?: number }; Returns: Json
+                           },
 "host_json":
 { Args: { "p_user_id": string }; Returns: Json
                            },
@@ -564,6 +585,9 @@ isOneToOne: false
                            },
 "is_group_member":
 { Args: { "p_group_id": string,"p_user_id"?: string }; Returns: boolean
+                           },
+"is_platform_admin":
+{ Args: { "p_user_id"?: string }; Returns: boolean
                            },
 "is_session_member":
 { Args: { "p_session_id": string,"p_user_id"?: string }; Returns: boolean
@@ -619,6 +643,9 @@ isOneToOne: false
 "reliability_score":
 { Args: { "p_user_id": string }; Returns: number
                            },
+"require_admin":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
 "require_ready_user":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
@@ -634,11 +661,17 @@ isOneToOne: false
 "sessions_within_radius":
 { Args: { "p_lat": number,"p_limit"?: number,"p_lng": number,"p_radius_m"?: number }; Returns: Json
                            },
+"set_group_member":
+{ Args: { "p_group_id": string,"p_role"?: Database["public"]['Enums']["group_role"],"p_trusted"?: boolean,"p_user_id": string }; Returns: undefined
+                           },
 "set_guest":
 { Args: { "p_guest": boolean,"p_session_id": string }; Returns: Json
                            },
 "set_interests":
 { Args: { "p_interest_ids": (number)[] }; Returns: undefined
+                           },
+"set_priority_window":
+{ Args: { "p_hours": number,"p_session_id": string }; Returns: undefined
                            },
 "shares_session":
 { Args: { "a": string,"b": string }; Returns: boolean

@@ -116,6 +116,12 @@ export function GroupScreen({ id, code, autojoin }: { id?: string; code?: string
             {g.my_role === 'admin' ? <Button label={t('groups.newSession')} icon={Icons.Plus} onPress={() => router.push('/create')} /> : null}
             <Button label={t('groups.invite')} variant="outline" icon={Icons.LinkSimple} onPress={() => void invite()} />
             <Button label={g.is_following ? t('groups.following') : t('groups.follow')} variant="outline" icon={Icons.Bell} onPress={() => follow.mutate({ groupId: g.id, follow: !g.is_following })} />
+            <Button
+              label={g.my_role === 'admin' ? t('members.manage') : t('members.title')}
+              variant="outline"
+              icon={Icons.UsersThree}
+              onPress={() => router.push({ pathname: '/group/members/[id]', params: { id: g.id } })}
+            />
           </View>
         ) : (
           <Button label={t('groups.join')} size="lg" loading={join.isPending} onPress={doJoin} />

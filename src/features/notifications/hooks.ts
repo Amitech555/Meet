@@ -9,7 +9,7 @@ import { pushPermissionStatus, registerForPush } from './push';
 
 export type AppNotification = {
   id: number;
-  kind: 'spot_opened' | 'session_cancelled' | 'reminder_24h' | 'reminder_2h' | 'checkin' | 'new_from_followed' | 'review_request';
+  kind: 'spot_opened' | 'session_cancelled' | 'reminder_24h' | 'reminder_2h' | 'checkin' | 'new_from_followed' | 'review_request' | 'priority_access';
   payload: Record<string, string>;
   created_at: string;
   read_at: string | null;

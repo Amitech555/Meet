@@ -29,6 +29,7 @@ import { useSessionRealtime } from '@/features/sessions/useSessionRealtime';
 import { addSessionToCalendar, mapsUrl, shareSession } from '@/features/sessions/share';
 import { spotsLeft, type SessionDetail } from '@/features/sessions/types';
 import { useRequireAuth } from '@/features/auth/useRequireAuth';
+import { useSetPriorityWindow } from '@/features/groups/hooks';
 import { useUserId } from '@/stores/auth';
 import { useTheme } from '@/design/theme';
 import { elevation, tintFor } from '@design/tokens';
@@ -86,6 +87,7 @@ export default function SessionScreen() {
   const cancel = useCancelSession();
   const joinSeries = useJoinSeries();
   const toggleSaved = useToggleSaved();
+  const priority = useSetPriorityWindow();
   const requireAuth = useRequireAuth();
   const [manageOpen, setManageOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -151,11 +153,13 @@ export default function SessionScreen() {
   }
 
   const detail: SessionDetail = s;
-  const isHost = detail.host.id === userId;
+  // Organisateur ou co-organisateur du groupe : mêmes outils de gestion
+  const isHost = detail.host.id === userId || !!detail.can_manage;
+  const priorityLocked = !!detail.priority_until && !detail.i_have_priority;
   const started = new Date(detail.starts_at).getTime() <= now;
   const open = detail.status === 'published' && !started;
   const left = spotsLeft(detail);
-  const state = joinStateFor(detail.my_status, left, open, isHost);
+  const state = joinStateFor(detail.my_status, left, open, isHost, priorityLocked);
   const guestCount = detail.my_guest_count ?? 0;
   const policyKey = { flexible: 'session.policyFlexible', moderate: 'session.policyModerate', strict: 'session.policyStrict' } as const;
 
@@ -173,6 +177,12 @@ export default function SessionScreen() {
         <View className="-mt-6 gap-6 rounded-t-card bg-bg px-4 pt-6">
           {detail.status === 'cancelled' ? <Banner tone="danger" text={detail.cancelled_reason ? `${t('session.cancelledBanner')} « ${detail.cancelled_reason} »` : t('session.cancelledBanner')} /> : null}
           {detail.status === 'completed' ? <Banner tone="ink" text={t('session.completedBanner')} /> : null}
+          {detail.priority_until && open ? (
+            <Banner
+              tone="ink"
+              text={t(detail.i_have_priority ? 'priority.yours' : 'priority.banner', { time: `${dayLabel(detail.priority_until).toLocaleLowerCase(lang)} ${formatStartTime(detail.priority_until, lang)}` })}
+            />
+          ) : null}
           {detail.status === 'published' && started ? <Banner tone="ink" text={t('session.startedBanner')} /> : null}
 
           <View className="gap-3">
@@ -355,6 +365,7 @@ export default function SessionScreen() {
             loading={joiningId === detail.id || leave.isPending}
             onJoin={() => requestJoin(detail)}
             onManage={() => setManageOpen(true)}
+            priorityUntil={detail.priority_until}
           />
         </View>
       </View>
@@ -379,6 +390,16 @@ export default function SessionScreen() {
                 <Button label={t('session.checkin')} icon={Icons.Check} onPress={() => (setManageOpen(false), router.push({ pathname: '/session/[id]/checkin', params: { id: detail.id } }))} />
               ) : null}
               <Button label={t('session.duplicate')} variant="outline" icon={Icons.Copy} onPress={() => (setManageOpen(false), router.push({ pathname: '/create', params: { from: detail.id } }))} />
+              {open && detail.group ? (
+                detail.priority_until ? (
+                  <Button label={t('priority.close')} variant="outline" icon={Icons.LockSimple} onPress={() => (setManageOpen(false), priority.mutate({ sessionId: detail.id, hours: 0 }))} />
+                ) : (
+                  <View className="flex-row gap-2">
+                    <Button label={t('priority.open24')} variant="outline" icon={Icons.ShieldCheck} className="flex-1" onPress={() => (setManageOpen(false), priority.mutate({ sessionId: detail.id, hours: 24 }))} />
+                    <Button label={t('priority.open12')} variant="outline" className="flex-1" onPress={() => (setManageOpen(false), priority.mutate({ sessionId: detail.id, hours: 12 }))} />
+                  </View>
+                )
+              ) : null}
               {open ? <Button label={t('session.cancelSession')} variant="danger" onPress={() => (setManageOpen(false), setCancelOpen(true))} /> : null}
             </>
           ) : open ? (

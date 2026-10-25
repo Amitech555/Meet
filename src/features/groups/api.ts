@@ -47,3 +47,21 @@ export async function setFollowHost(userId: string, hostId: string, follow: bool
     : await supabase.from('follows').delete().match({ follower_id: userId, host_id: hostId });
   if (error && error.code !== '23505') throw toAppError(error);
 }
+
+export type GroupMember = {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
+  role: 'admin' | 'member';
+  trusted: boolean;
+  is_owner: boolean;
+  sessions_attended: number;
+  reliability: number | null;
+};
+
+export const groupMembers = (groupId: string) => rpc<'group_members_list', GroupMember[]>('group_members_list', { p_group_id: groupId });
+
+export const setGroupMember = (groupId: string, userId: string, patch: { role?: 'admin' | 'member'; trusted?: boolean }) =>
+  rpc('set_group_member', { p_group_id: groupId, p_user_id: userId, p_role: patch.role, p_trusted: patch.trusted });
+
+export const setPriorityWindow = (sessionId: string, hours: number) => rpc('set_priority_window', { p_session_id: sessionId, p_hours: hours });

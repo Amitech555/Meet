@@ -6,14 +6,17 @@ import { Confetti } from '../ui/Confetti';
 import { Icons } from '../ui/icons';
 import type { ParticipantStatus } from '@/features/sessions/types';
 import { haptics } from '@/lib/haptics';
+import { formatStartTime } from '@/lib/time';
+import { currentLocale } from '@/i18n';
 
-export type JoinState = 'available' | 'full' | 'joined' | 'waitlisted' | 'closed' | 'hosting';
+export type JoinState = 'available' | 'full' | 'joined' | 'waitlisted' | 'closed' | 'hosting' | 'priority';
 
-export function joinStateFor(myStatus: ParticipantStatus | null, spotsLeft: number, open: boolean, isHost: boolean): JoinState {
+export function joinStateFor(myStatus: ParticipantStatus | null, spotsLeft: number, open: boolean, isHost: boolean, priorityLocked = false): JoinState {
   if (isHost) return 'hosting';
   if (myStatus === 'joined') return 'joined';
   if (myStatus === 'waitlist') return 'waitlisted';
   if (!open) return 'closed';
+  if (priorityLocked) return 'priority';
   return spotsLeft > 0 ? 'available' : 'full';
 }
 
@@ -25,6 +28,7 @@ export function JoinButton({
   state,
   onJoin,
   onManage,
+  priorityUntil,
   size = 'md',
   loading,
   fullWidth,
@@ -32,6 +36,7 @@ export function JoinButton({
   state: JoinState;
   onJoin: () => void;
   onManage?: () => void;
+  priorityUntil?: string | null;
   size?: 'md' | 'lg';
   loading?: boolean;
   fullWidth?: boolean;
@@ -69,6 +74,16 @@ export function JoinButton({
       return <Button {...common} variant="outline" icon={Icons.Clock} label={t('common.onWaitlist')} onPress={() => (haptics.tap(), onManage?.())} />;
     case 'hosting':
       return <Button {...common} variant="outline" label={t('session.manage')} onPress={() => (haptics.tap(), onManage?.())} />;
+    case 'priority':
+      return (
+        <Button
+          {...common}
+          variant="outline"
+          icon={Icons.LockSimple}
+          label={t('priority.locked', { time: priorityUntil ? formatStartTime(priorityUntil, currentLocale()) : '' })}
+          disabled
+        />
+      );
     case 'closed':
       return <Button {...common} variant="outline" label={t('common.full')} disabled />;
   }

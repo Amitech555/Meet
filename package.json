@@ -82,7 +82,7 @@
     "db:reset": "bash scripts/reset-db.sh",
     "screens": "node scripts/screenshots.mjs",
     "db:types": "supabase gen types typescript --local > src/lib/database.types.ts",
-    "e2e:web": "node scripts/e2e-web.mjs",
+    "e2e:web": "supabase db reset && expo export --platform web && node scripts/e2e-web.mjs",
     "e2e:mobile": "maestro test e2e/maestro/parcours-principal.yaml",
     "db:race": "bash scripts/race-test.sh"
   },

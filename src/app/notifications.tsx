@@ -28,6 +28,7 @@ const look: Record<AppNotification['kind'], { icon: Icon; tint: keyof typeof cat
   checkin: { icon: Icons.Check, tint: 'encre' },
   review_request: { icon: Icons.ThumbsUp, tint: 'mousse' },
   new_from_followed: { icon: Icons.Bell, tint: 'framboise' },
+  priority_access: { icon: Icons.ShieldCheck, tint: 'sapin' },
 };
 
 function useText() {
@@ -48,6 +49,8 @@ function useText() {
         return t('notifications.checkinReminder', { title: p.title });
       case 'review_request':
         return `${t('review.title')} — ${p.title}`;
+      case 'priority_access':
+        return t('notifications.priorityAccess', { title: p.title });
       case 'new_from_followed':
         return `${t('notifications.newFromFollowed', { name: p.host_name })} : ${p.title}`;
     }

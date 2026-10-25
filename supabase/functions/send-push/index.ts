@@ -14,6 +14,7 @@ const texts: Record<'fr' | 'en', Record<string, (p: Record<string, string>) => {
     checkin: (p) => ({ title: 'Qui était là ?', body: `Fais l’appel pour ${p.title}` }),
     review_request: (p) => ({ title: 'Comment c’était ?', body: `Donne ton avis sur ${p.title}` }),
     new_from_followed: (p) => ({ title: `${p.host_name} a publié une session`, body: p.title }),
+    priority_access: (p) => ({ title: 'Accès prioritaire', body: `${p.title} : tu peux t’inscrire avant tout le monde.` }),
   },
   en: {
     reminder_24h: (p) => ({ title: 'Tomorrow', body: `${p.title} at ${time(p.starts_at, 'en')}` }),
@@ -23,6 +24,7 @@ const texts: Record<'fr' | 'en', Record<string, (p: Record<string, string>) => {
     checkin: (p) => ({ title: 'Who showed up?', body: `Take attendance for ${p.title}` }),
     review_request: (p) => ({ title: 'How was it?', body: `Rate ${p.title}` }),
     new_from_followed: (p) => ({ title: `${p.host_name} posted a session`, body: p.title }),
+    priority_access: (p) => ({ title: 'Priority access', body: `${p.title}: you can sign up before everyone else.` }),
   },
 };
 

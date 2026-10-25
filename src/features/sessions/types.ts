@@ -56,6 +56,11 @@ export type SessionSummary = {
   group: { id: string; name: string } | null;
   series_id: string | null;
   recurrence_rule: string | null;
+  /** Fenêtre prioritaire (joueurs de confiance du groupe), si active */
+  priority_until?: string | null;
+  i_have_priority?: boolean;
+  /** Organisateur ou co-organisateur du groupe */
+  can_manage?: boolean;
 };
 
 export function spotsLeft(s: Pick<SessionSummary, 'max_players' | 'joined_count'>): number {

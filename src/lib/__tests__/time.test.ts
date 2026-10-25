@@ -81,3 +81,10 @@ describe('formatMessageTime', () => {
     expect(formatMessageTime('2026-10-21T22:08:00Z', 'fr', now)).toMatch(/^mer\.? 21 oct\.? · 18:08$/);
   });
 });
+
+describe('formatDay', () => {
+  it('ne décale pas une date sans heure', () => {
+    const { formatDay } = jest.requireActual('../time');
+    expect(formatDay('2026-10-05', 'fr')).toMatch(/^lun\.? 5 oct\.?$/);
+  });
+});

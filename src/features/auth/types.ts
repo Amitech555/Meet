@@ -30,4 +30,5 @@ export type Me = PublicProfile & {
   terms_version: string | null;
   interest_ids: number[];
   unread_notifications: number;
+  is_admin: boolean;
 };

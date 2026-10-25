@@ -148,3 +148,9 @@ export function formatMessageTime(iso: string, locale: AppLocale = 'fr', now: Da
 export function formatMonthYear(iso: string, locale: AppLocale = 'fr'): string {
   return format(inAppTz(iso), 'MMMM yyyy', { locale: locales[locale] });
 }
+
+/** Date sans heure (« 2026-10-05 », ex. début de semaine) : pas de conversion de fuseau, sinon on recule d'un jour. */
+export function formatDay(ymd: string, locale: AppLocale = 'fr'): string {
+  const [y, m, d] = ymd.slice(0, 10).split('-').map(Number) as [number, number, number];
+  return format(new TZDate(y, m - 1, d, 12, 0, 0, APP_TZ), locale === 'fr' ? 'EEE d MMM' : 'EEE, MMM d', { locale: locales[locale] });
+}

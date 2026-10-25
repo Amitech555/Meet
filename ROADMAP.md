@@ -151,9 +151,15 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - Suivre un organisateur / un groupe
 - Lecture hors-ligne des sessions déjà vues
 
-### P2 (à proposer avant de coder)
-- Tableau de bord organisateur, badges et séries, suggestions personnalisées, tournois et ligues,
-  co-organisateurs, pages Lieux/Organisations vérifiées, back-office admin web.
+### P2 — validés et faits (25 oct.)
+- **Back-office admin** (`/admin`, comptes `is_admin` seulement) : file des signalements avec aperçu de la cible, actions (bannir l'auteur — annule ses sessions à venir —, annuler la session, supprimer le message, rendre le groupe privé, classer sans suite), levée de bannissement, stats par ville (vues `metrics`).
+- **Tableau de bord organisateur** (`/host`) : remplissage moyen, présence réelle, sessions, joueurs différents, sessions et remplissage par semaine (deux histogrammes séparés, pas de double axe), réguliers, sessions récentes.
+- **Co-organisateurs et joueurs de confiance** : le propriétaire nomme des co-organisateurs (appel, annulation, chat des sessions du groupe) ; propriétaire et co-organisateurs marquent des joueurs de confiance ; fenêtre prioritaire 12 h / 24 h sur une session de groupe (vérifiée en base par trigger, notification `priority_access`).
+- Migration 012 + 17 tests pgTAP (98 au total), e2e étendu (back-office, tableau de bord, fenêtre prioritaire).
+- Corrigé en passant : le détail de session revalide toujours (le cache hors-ligne pouvait montrer des droits périmés), dates « début de semaine » décalées d'un jour.
+
+### P2 (restant, à proposer avant de coder)
+- Badges et séries, suggestions personnalisées, tournois et ligues, pages Lieux/Organisations vérifiées.
 
 ### Phase 2 (architecture prévue)
 - Stripe Connect Express, commission paramétrable, remboursements selon la politique, webhooks via Edge Functions.

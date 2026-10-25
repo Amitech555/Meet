@@ -248,3 +248,20 @@ insert into public.messages (group_id, user_id, body, created_at) values
 -- Recalcule les compteurs (les insertions directes passent par le trigger, mais on s'assure de l'état final)
 select public.refresh_session_counts(id) from public.sessions;
 drop table demo_sessions;
+
+-- P2 : rôles de démo -------------------------------------------------------------------
+-- Camille fait partie de l'équipe Partants (accès au back-office /admin)
+update public.profiles set is_admin = true where id = 'a1000000-0000-4000-8000-000000000001';
+-- Course Griffintown : Jean-Baptiste co-organise, trois joueurs de confiance
+update public.group_members set role = 'admin' where group_id = 'b2000000-0000-4000-8000-000000000001' and user_id = 'a1000000-0000-4000-8000-000000000004';
+update public.group_members set trusted = true where group_id = 'b2000000-0000-4000-8000-000000000001'
+  and user_id in ('a1000000-0000-4000-8000-000000000005', 'a1000000-0000-4000-8000-000000000006', 'a1000000-0000-4000-8000-000000000007');
+-- Fenêtre prioritaire de 12 h sur la course de la semaine prochaine
+update public.sessions set priority_until = now() + interval '12 hours' where id = 'c3000000-0000-4000-8000-000000000017';
+
+-- Signalements à traiter (démo du back-office)
+insert into public.reports (reporter_id, target_type, target_id, reason, details, created_at) values
+  ('a1000000-0000-4000-8000-000000000009', 'user', 'a1000000-0000-4000-8000-000000000016', 'dating', 'M''a écrit trois fois pour un verre après la session.', now() - interval '3 hours'),
+  ('a1000000-0000-4000-8000-000000000011', 'user', 'a1000000-0000-4000-8000-000000000016', 'harassment', null, now() - interval '1 hour'),
+  ('a1000000-0000-4000-8000-000000000012', 'session', 'c3000000-0000-4000-8000-000000000015', 'spam', 'Le café fait de la pub, ce n''est pas vraiment un tournoi.', now() - interval '1 day'),
+  ('a1000000-0000-4000-8000-000000000008', 'message', (select id::text from public.messages where body like 'Parfait, j''amène%' limit 1), 'other', 'Test de signalement de message.', now() - interval '2 days');

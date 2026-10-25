@@ -12,6 +12,8 @@ const knownCodes = {
   starts_in_past: 'create.errorPast',
   invalid_price: 'create.errorPrice',
   group_private: 'groups.privateLocked',
+  priority_window: 'priority.error',
+  forbidden: 'admin.forbidden',
 } as const;
 
 export class AppError extends Error {
