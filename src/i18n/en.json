@@ -493,5 +493,12 @@
     "close": "Open to everyone now",
     "set": "Priority access on. Trusted players have been notified.",
     "error": "During priority access, only trusted players can sign up."
+  },
+  "demo": {
+    "bar": "Demo · sample data, nothing is saved",
+    "as": "I am",
+    "choose": "View the app as",
+    "code": "Demo: the code is 123456.",
+    "unavailable": "Not available in the demo. Use email sign-in."
   }
 }

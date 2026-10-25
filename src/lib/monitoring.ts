@@ -1,21 +1,18 @@
-import * as Sentry from '@sentry/react-native';
 import { env } from './env';
 
-let started = false;
+type SentryModule = typeof import('@sentry/react-native');
+let sentry: SentryModule | null = null;
 
-/** Sentry (crashs). Aucune donnée personnelle : pas d'IP, pas de corps de requête. */
+/** Sentry (crashs), chargé seulement si un DSN est configuré. Aucune donnée personnelle. */
 export function initMonitoring() {
-  if (started || !env.sentryDsn) return;
-  started = true;
-  Sentry.init({
-    dsn: env.sentryDsn,
-    sendDefaultPii: false,
-    tracesSampleRate: 0.2,
-    enabled: !__DEV__,
+  if (sentry || !env.sentryDsn) return;
+  void import('@sentry/react-native').then((S) => {
+    sentry = S;
+    S.init({ dsn: env.sentryDsn, sendDefaultPii: false, tracesSampleRate: 0.2, enabled: !__DEV__ });
   });
 }
 
 export function captureError(e: unknown) {
-  if (started) Sentry.captureException(e);
+  if (sentry) sentry.captureException(e);
   else if (__DEV__ && process.env.NODE_ENV !== 'test') console.error(e);
 }

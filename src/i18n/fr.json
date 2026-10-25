@@ -493,5 +493,12 @@
     "close": "Ouvrir à tous maintenant",
     "set": "Accès prioritaire activé. Les joueurs de confiance sont prévenus.",
     "error": "Pendant l'accès prioritaire, seuls les joueurs de confiance peuvent s'inscrire."
+  },
+  "demo": {
+    "bar": "Démo · données fictives, rien n'est enregistré",
+    "as": "Je suis",
+    "choose": "Voir l'app en tant que",
+    "code": "Démo : le code est 123456.",
+    "unavailable": "Pas disponible dans la démo. Utilise la connexion par courriel."
   }
 }

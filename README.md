@@ -51,18 +51,27 @@ Aucun secret dans le dépôt : les clés serveur (Stripe, Expo push) vont dans `
 | `npm run typecheck` | TypeScript strict |
 | `npm run lint` | ESLint (Expo + React Compiler + interdiction des couleurs en dur) |
 | `npm test` | Tests Jest (temps/fuseau, argent, i18n, contrastes AA, logique métier) |
-| `npm run db:test` | Migrations + seed + 81 tests pgTAP + test de concurrence réel |
+| `npm run db:test` | Migrations + seed + 98 tests pgTAP + test de concurrence réel |
 | `npm run db:race` | Seul le test de concurrence : 30 connexions simultanées sur 10 places |
 | `npm run db:reset` | Réinitialise la base de dev avec le seed |
 | `npm run db:types` | Régénère `src/lib/database.types.ts` depuis le schéma local |
 | `npm run e2e:web` | Parcours principal de bout en bout (export web + Supabase local + Mailpit) |
 | `npm run e2e:mobile` | Même parcours avec Maestro sur simulateur (dev build) |
+| `npm run demo:build` | Aperçu web sans serveur (`EXPO_PUBLIC_DEMO=1`) : un seul fichier HTML autonome dans `dist-demo/` |
+| `node scripts/check-demo.mjs` | Vérifie l'aperçu sous CSP stricte, depuis un chemin non racine |
 | `npm run export:web && npm run screens -- /styleguide --full` | Captures iPhone SE / grand écran / sombre dans `screenshots/` |
 
 ## Comptes de démo (seed local)
 
 `demo+camille@partants.app`, `demo+karim@partants.app`, … — mot de passe `partants-demo`.
 Dans l'app, la connexion se fait par code à 6 chiffres : en local, les courriels arrivent dans Mailpit (http://127.0.0.1:54324).
+
+## Mode démo (aperçu web)
+
+`EXPO_PUBLIC_DEMO=1` remplace le client Supabase par une base en mémoire (`src/lib/demo/`) : instantané du seed local
+(`scripts/demo-snapshot.sh`, dates décalées pour rester « ce soir »), RPC réécrites en JS avec les mêmes codes d'erreur.
+Code de connexion : `123456`. Une barre « Démo » permet de changer de profil (Camille admin, Karim propriétaire de groupe, Lucas nouvel arrivant).
+Rien n'est envoyé ni enregistré. Après un changement de RPC ou de seed, mettre à jour `server.ts` et relancer `demo-snapshot.sh`.
 
 ## Documentation
 

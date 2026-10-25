@@ -156,6 +156,8 @@ PostHog (analytics + feature flags) · Sentry · Mapbox Geocoding · MapLibre (t
 - **Tableau de bord organisateur** (`/host`) : remplissage moyen, présence réelle, sessions, joueurs différents, sessions et remplissage par semaine (deux histogrammes séparés, pas de double axe), réguliers, sessions récentes.
 - **Co-organisateurs et joueurs de confiance** : le propriétaire nomme des co-organisateurs (appel, annulation, chat des sessions du groupe) ; propriétaire et co-organisateurs marquent des joueurs de confiance ; fenêtre prioritaire 12 h / 24 h sur une session de groupe (vérifiée en base par trigger, notification `priority_access`).
 - Migration 012 + 17 tests pgTAP (98 au total), e2e étendu (back-office, tableau de bord, fenêtre prioritaire).
+- **Aperçu web sans serveur** (mode démo, `npm run demo:build`) : fichier HTML autonome, données fictives, changement de profil.
+- Corrigé : après connexion, « rejoindre » revient à l'écran d'origine au lieu d'en empiler une copie (Retour ramenait à la même session).
 - Corrigé en passant : le détail de session revalide toujours (le cache hors-ligne pouvait montrer des droits périmés), dates « début de semaine » décalées d'un jour.
 
 ### P2 (restant, à proposer avant de coder)

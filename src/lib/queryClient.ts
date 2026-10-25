@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { QueryClient, onlineManager, focusManager, type Query } from '@tanstack/react-query';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { isDemo } from './env';
 import { AppState, Platform } from 'react-native';
 
 export const queryClient = new QueryClient({
@@ -33,6 +34,7 @@ export const persistOptions = {
   maxAge: 24 * 60 * 60 * 1000,
   buster: 'v1',
   dehydrateOptions: {
-    shouldDehydrateQuery: (q: Query) => q.state.status === 'success' && PERSISTED_ROOTS.has(String(q.queryKey[0])),
+    // En démo, la base vit en mémoire : rien à garder d'une visite à l'autre
+    shouldDehydrateQuery: (q: Query) => !isDemo && q.state.status === 'success' && PERSISTED_ROOTS.has(String(q.queryKey[0])),
   },
 };

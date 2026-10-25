@@ -11,4 +11,7 @@ export const env = {
   googleWebClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '',
 } as const;
 
-export const isSupabaseConfigured = Boolean(env.supabaseUrl && env.supabaseAnonKey);
+/** Aperçu web sans serveur : base en mémoire (src/lib/demo). */
+export const isDemo = process.env.EXPO_PUBLIC_DEMO === '1';
+
+export const isSupabaseConfigured = isDemo || Boolean(env.supabaseUrl && env.supabaseAnonKey);

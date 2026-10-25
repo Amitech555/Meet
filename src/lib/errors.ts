@@ -14,6 +14,7 @@ const knownCodes = {
   group_private: 'groups.privateLocked',
   priority_window: 'priority.error',
   forbidden: 'admin.forbidden',
+  demo_unavailable: 'demo.unavailable',
 } as const;
 
 export class AppError extends Error {

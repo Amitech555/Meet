@@ -1,7 +1,7 @@
 {
   "name": "partants",
   "version": "0.1.0",
-  "main": "expo-router/entry",
+  "main": "index.js",
   "dependencies": {
     "@date-fns/tz": "^1.5.0",
     "@expo-google-fonts/bricolage-grotesque": "^0.4.1",
@@ -84,7 +84,8 @@
     "db:types": "supabase gen types typescript --local > src/lib/database.types.ts",
     "e2e:web": "supabase db reset && expo export --platform web && node scripts/e2e-web.mjs",
     "e2e:mobile": "maestro test e2e/maestro/parcours-principal.yaml",
-    "db:race": "bash scripts/race-test.sh"
+    "db:race": "bash scripts/race-test.sh",
+    "demo:build": "bash scripts/build-demo.sh"
   },
   "private": true,
   "jest": {

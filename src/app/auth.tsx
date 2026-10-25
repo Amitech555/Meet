@@ -16,7 +16,7 @@ import { useAuth } from '@/stores/auth';
 import { usePrefs } from '@/stores/prefs';
 import { errorMessage } from '@/lib/errors';
 import { isAdult, maskBirthdate, parseBirthdate } from '@/lib/birthdate';
-import { isSupabaseConfigured } from '@/lib/env';
+import { isDemo, isSupabaseConfigured } from '@/lib/env';
 import { track } from '@/lib/analytics';
 
 type Step = 'choose' | 'email' | 'code' | 'finish';
@@ -172,6 +172,11 @@ export default function AuthScreen() {
         {currentStep === 'code' ? (
           <View className="gap-4">
             <Text>{t('auth.emailSent', { email: email.trim() })}</Text>
+            {isDemo ? (
+              <Text variant="bodyStrong" className="rounded-field bg-citron px-4 py-3 text-onCitron">
+                {t('demo.code')}
+              </Text>
+            ) : null}
             <TextField
               label={t('auth.codePlaceholder')}
               value={code}

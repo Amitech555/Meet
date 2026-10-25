@@ -1,4 +1,4 @@
-import PostHog from 'posthog-react-native';
+import type PostHog from 'posthog-react-native';
 import { env } from './env';
 
 /**
@@ -29,10 +29,17 @@ export type AnalyticsEvent =
 type Props = Record<string, string | number | boolean | null | undefined>;
 
 let client: PostHog | null = null;
+let loading = false;
 
+// PostHog est chargé seulement si une clé est configurée (ni en dev local ni dans l'aperçu démo)
 function getClient(): PostHog | null {
   if (!env.posthogKey) return null;
-  client ??= new PostHog(env.posthogKey, { host: env.posthogHost, captureAppLifecycleEvents: true });
+  if (!client && !loading) {
+    loading = true;
+    void import('posthog-react-native').then(({ default: P }) => {
+      client = new P(env.posthogKey, { host: env.posthogHost, captureAppLifecycleEvents: true });
+    });
+  }
   return client;
 }
 
